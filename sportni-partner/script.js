@@ -34,7 +34,12 @@ function renderActivities() {
         <p>${a.date} ob ${a.time} · organizator: ${a.org}</p>
         <div class="tags"><span>${a.level}</span><span>${a.gender}</span><span>${a.age}</span><span>${a.spots} prostih mest</span></div>
       </div>
-      <button onclick="toggleJoin(this)" class="btn ${a.spots > 0 ? 'primary' : 'disabled'} small" ${a.spots === 0 ? 'disabled' : ''}>${a.spots > 0 ? 'Prijavi se' : 'Polno'}</button>
+      <div class="activity-buttons">
+        <button onclick="toggleJoin(this)" class="btn ${a.spots > 0 ? 'primary' : 'disabled'} small" ${a.spots === 0 ? 'disabled' : ''}>
+          ${a.spots > 0 ? 'Prijavi se' : 'Polno'}
+        </button>
+      </div>
+       <button onclick="toggleHeart(this)" class="heart-btn">♡</button>
     </article>`).join('') || '<p class="empty">Ni najdenih aktivnosti za izbrane filtre.</p>';
 }
 
@@ -49,6 +54,17 @@ function toggleJoin(button) {
     button.classList.add('primary');
   }
 }
+
+function toggleHeart(button) {
+  button.classList.toggle('liked');
+
+  if (button.classList.contains('liked')) {
+    button.textContent = '♥';
+  } else {
+    button.textContent = '♡';
+  }
+}
+
 
 function showSuccess(event) {
   event.preventDefault();
