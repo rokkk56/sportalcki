@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aktivnosti | ŠportniPartner.si</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="navbar">
+    <a class="logo" href="index.html"><span>Š</span> ŠportniPartner.si</a>
+    <nav>
+      <a href="index.html">Domov</a>
+      <a href="aktivnosti.html" class="active">Aktivnosti</a>
+      <a href="objavi.html">Objavi oglas</a>
+      <a href="termini.html">Redni termini</a>
+      <a href="profil.html">Moj profil</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="page-title">
+      <p class="badge">Iskanje aktivnosti</p>
+      <h1>Poišči športno aktivnost</h1>
+      <p>Filtriraj po športu, kraju, datumu, zahtevnosti, spolu, starosti in prostih mestih.</p>
+    </section>
+
+    <section class="filters card">
+      <input id="search" type="text" placeholder="Išči po športu ali kraju ..." />
+      <select id="sport">
+        <option value="">Vsi športi</option>
+        <option>Odbojka</option>
+        <option>Nogomet</option>
+        <option>Košarka</option>
+        <option>Tenis</option>
+        <option>Tek</option>
+      </select>
+      <select id="level">
+        <option value="">Vse ravni</option>
+        <option>Začetnik</option>
+        <option>Srednja</option>
+        <option>Napredna</option>
+      </select>
+      <select id="gender">
+        <option value="">Vsi spoli</option>
+        <option>Mešano</option>
+        <option>Moški</option>
+        <option>Ženske</option>
+      </select>
+      <select id="age">
+        <option value="">Vse starosti</option>
+        <option>15-18</option>
+        <option>18-30</option>
+        <option>30+</option>
+      </select>
+      <label class="check"><input id="available" type="checkbox" /> Samo prosta mesta</label>
+    </section>
+
+    <section id="activityList" class="activity-list"></section>
+  </main>
+
+  <footer>© 2026 ŠportniPartner.si · Projektna ekipa Športalčki</footer>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Objavi aktivnost | Športalčki</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="navbar">
+  <a class="logo" href="index.html"><span>Š</span> ŠportniPartner.si</a>
+  <nav>
+    <a href="index.html" class="active">Domov</a>
+    <a href="aktivnosti.html">Aktivnosti</a>
+    <a href="objavi.html">Objavi oglas</a>
+    <a href="termini.html">Redni termini</a>
+    <a href="profil.html">Moj profil</a>
+  </nav>
+</header>
+
+<main class="page narrow">
+
+  <section class="page-title">
+    <span class="badge">Nov športni oglas</span>
+    <h1>Objavi svojo aktivnost</h1>
+    <p>
+      Iščeš družbo za odbojko, košarko, nogomet, tenis ali tek?
+      Izpolni obrazec in drugi uporabniki se ti bodo lahko pridružili.
+    </p>
+  </section>
+
+  <section class="card">
+
+    <form class="form" id="activityForm">
+
+      <div>
+        <label for="naslov">Naslov aktivnosti</label>
+        <input
+                type="text"
+                id="naslov"
+                name="naslov"
+                placeholder="Npr. Jutri igramo odbojko v parku"
+                required
+        >
+      </div>
+
+      <div class="two">
+
+        <div>
+          <label for="ikona">Ikona oglasa</label>
+          <select id="ikona" name="ikona" required>
+            <option value="">Izberi ikono</option>
+            <option value="🏐">🏐 Odbojka</option>
+            <option value="⚽">⚽ Nogomet</option>
+            <option value="🏀">🏀 Košarka</option>
+            <option value="🎾">🎾 Tenis</option>
+            <option value="🏃">🏃 Tek</option>
+            <option value="🚴">🚴 Kolesarjenje</option>
+            <option value="🏸">🏸 Badminton</option>
+            <option value="💪">💪 Fitnes</option>
+            <option value="🏊">🏊 Plavanje</option>
+            <option value="🥾">🥾 Pohod</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="two">
+        <div>
+          <label for="lokacija">Lokacija</label>
+          <input
+                  type="text"
+                  id="lokacija"
+                  name="lokacija"
+                  placeholder="Npr. Ljubljana, Tivoli"
+                  required
+          >
+        </div>
+
+        <div>
+          <label for="mesto">Kraj</label>
+          <input
+                  type="text"
+                  id="mesto"
+                  name="mesto"
+                  placeholder="Npr. Ljubljana"
+                  required
+          >
+        </div>
+      </div>
+
+      <div class="two">
+        <div>
+          <label for="datum">Datum</label>
+          <input type="date" id="datum" name="datum" required>
+        </div>
+
+        <div>
+          <label for="ura">Ura</label>
+          <input type="time" id="ura" name="ura" required>
+        </div>
+      </div>
+
+      <div class="two">
+        <div>
+          <label for="mesta">Število prostih mest</label>
+          <input
+                  type="number"
+                  id="mesta"
+                  name="mesta"
+                  min="1"
+                  max="50"
+                  placeholder="Npr. 4"
+                  required
+          >
+        </div>
+
+        <div>
+          <label for="zahtevnost">Zahtevnost</label>
+          <select id="zahtevnost" name="zahtevnost" required>
+            <option value="">Izberi zahtevnost</option>
+            <option value="zacetnik">Začetnik</option>
+            <option value="rekreativno">Rekreativno</option>
+            <option value="srednje">Srednje</option>
+            <option value="napredno">Napredno</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="two">
+        <div>
+          <label for="starost">Starostna skupina</label>
+          <select id="starost" name="starost">
+            <option value="">Vse starosti</option>
+            <option value="do18">Do 18 let</option>
+            <option value="18-25">18–25 let</option>
+            <option value="26-35">26–35 let</option>
+            <option value="36plus">36+ let</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="spol">Spol udeležencev</label>
+          <select id="spol" name="spol">
+            <option value="">Vsi</option>
+            <option value="moski">Moški</option>
+            <option value="zenske">Ženske</option>
+            <option value="mesano">Mešano</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label for="opis">Opis aktivnosti</label>
+        <textarea
+                id="opis"
+                name="opis"
+                rows="6"
+                placeholder="Napiši, kje se dobite, kakšna je igra, kaj naj udeleženci prinesejo ..."
+        ></textarea>
+      </div>
+
+      <label class="check">
+        <input type="checkbox" id="redno" name="redno">
+        Ta aktivnost se ponavlja kot redni termin
+      </label>
+
+      <button type="submit" class="btn primary">
+        Objavi aktivnost
+      </button>
+
+      <p id="successMessage" class="success hidden">
+        Aktivnost je bila uspešno objavljena.
+      </p>
+
+    </form>
+
+  </section>
+
+</main>
+
+<footer>
+  <p>© 2026 Športalčki | ŠportniPartner.si</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
