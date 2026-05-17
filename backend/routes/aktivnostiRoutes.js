@@ -11,14 +11,21 @@ router.get("/", async (req, res) => {
                 Termin.Datum, 
                 Termin.SteviloMest, 
                 Termin.Opis, 
+                Termin.Zahtevnost,
+                Termin.StarostnaSkupina,
+                Termin.Spol,
                 Sport.Naziv AS Sport,
                 Prizorisce.Naziv AS Prizorisce,
-                Prizorisce.mesto
+                Prizorisce.mesto,
+                Uporabnik.Ime AS OrganizatorIme,
+                Uporabnik.Priimek AS OrganizatorPriimek
             FROM Termin
             JOIN Sport
             On Sportid_Sport = id_Sport
             JOIN Prizorisce
             ON Prizorisceid_Prizorisce = id_Prizorisce
+            JOIN Uporabnik
+            ON Uporabnikid_Organizator = id_Uporabnik
             `);
 
             res.json(result.rows);
