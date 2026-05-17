@@ -146,3 +146,175 @@ document.querySelectorAll('#search, #sport, #level, #gender, #age, #available').
   el.addEventListener('change', renderActivities);
 });
 
+const API_URL = "http://localhost:3000/api";
+
+const loginForm = document.getElementById("loginForm");
+
+if (loginForm) {
+  loginForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const message = document.getElementById("loginMessage");
+
+    try {
+      const odgovor = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
+      });
+
+      const podatki = await odgovor.json();
+      console.log(podatki);
+
+      if (!odgovor.ok) {
+        message.textContent = podatki.napaka;
+        message.classList.remove("hidden");
+        return;
+      }
+
+      localStorage.setItem("token", podatki.token);
+      localStorage.setItem("uporabnik", JSON.stringify(podatki.uporabnik));
+
+      if (podatki.uporabnik.tip === "Administrator") {
+        window.location.href = "admin.html";
+      } else {
+        window.location.href = "profil.html";
+      }
+
+    } catch (err) {
+      message.textContent = "Napaka pri povezavi s strežnikom.";
+      message.classList.remove("hidden");
+    }
+  });
+}
+
+function odjava() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("uporabnik");
+  window.location.href = "prijava.html";
+}
+
+async function naloziAdminAktivnosti() {
+  const adminList = document.getElementById("adminActivityList");
+
+  if (!adminList) return;
+
+  const token = localStorage.getItem("token");
+  const uporabnik = JSON.parse(localStorage.getItem("uporabnik"));
+
+  if (!token || !uporabnik || uporabnik.tip !== "Administrator") {
+    window.location.href = "prijava.html";
+    return;
+  }
+
+  try {
+    const odgovor = await fetch(`${API_URL}/aktivnosti`);
+    const aktivnosti = await odgovor.json();
+
+    adminList.innerHTML = "";
+
+    aktivnosti.forEach(a => {
+      adminList.innerHTML += `
+                <article class="activity-card">
+                    <div class="emoji">
+                        ${vrniIkonoSporta(a.sport)}
+                    </div>
+
+                    <div class="activity-info">
+                        <h2>${a.naziv}</h2>
+                        <p>
+                            ${a.sport} · ${a.prizorisce}, ${a.mesto}
+                        </p>
+                        <p>
+                            ${new Date(a.datum).toLocaleDateString("sl-SI")}
+                        </p>
+
+                        <div class="tags">
+                            <span>${a.zahtevnost}</span>
+                            <span>${a.stevilomest} prostih mest</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button class="btn secondary small" onclick="urediAktivnost(${a.id_termin}, '${a.naziv}', ${a.stevilomest}, '${a.opis}', '${a.zahtevnost}')">
+                            Uredi
+                        </button>
+
+                        <button class="btn danger small" onclick="izbrisiAktivnost(${a.id_termin})">
+                            Izbriši
+                        </button>
+                    </div>
+                </article>
+            `;
+    });
+
+  } catch (err) {
+    adminList.innerHTML = `
+            <p class="empty">Napaka pri nalaganju aktivnosti.</p>
+        `;
+  }
+}
+
+function vrniIkonoSporta(sport) {
+  if (sport === "Nogomet") return "⚽";
+  if (sport === "Košarka") return "🏀";
+  if (sport === "Odbojka") return "🏐";
+  if (sport === "Tenis") return "🎾";
+  if (sport === "Badminton") return "🏸";
+  return "🏃";
+}
+
+async function izbrisiAktivnost(id) {
+  const token = localStorage.getItem("token");
+
+  if (!confirm("Ali res želiš izbrisati to aktivnost?")) {
+    return;
+  }
+
+  await fetch(`${API_URL}/aktivnosti/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  naloziAdminAktivnosti();
+}
+
+async function urediAktivnost(id, starNaziv, staraMesta, starOpis, staraZahtevnost) {
+  const token = localStorage.getItem("token");
+
+  const naziv = prompt("Vnesi nov naziv:", starNaziv);
+  const steviloMest = prompt("Vnesi število prostih mest:", staraMesta);
+  const opis = prompt("Vnesi opis:", starOpis);
+  const zahtevnost = prompt("Vnesi zahtevnost:", staraZahtevnost);
+
+  if (!naziv || !steviloMest || !opis || !zahtevnost) {
+    return;
+  }
+
+  await fetch(`${API_URL}/aktivnosti/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      naziv: naziv,
+      steviloMest: steviloMest,
+      opis: opis,
+      zahtevnost: zahtevnost
+    })
+  });
+
+  naloziAdminAktivnosti();
+}
+
+naloziAdminAktivnosti();
