@@ -48,7 +48,8 @@ CREATE TABLE Termin (
     Spol VARCHAR (30),
     Prizorisceid_Prizorisce INTEGER REFERENCES Prizorisce(id_Prizorisce),
     Sportid_Sport INTEGER REFERENCES Sport(id_Sport),
-    Uporabnikid_Organizator INTEGER REFERENCES Uporabnik(id_Uporabnik)
+    Uporabnikid_Organizator INTEGER REFERENCES Uporabnik(id_Uporabnik),
+    RedniTermin BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE Ocena (
@@ -157,19 +158,18 @@ INSERT INTO Sport (Naziv) VALUES
 ('Nogomet'), ('Tenis'), ('Košarka'), ('Odbojka'), ('Badminton'), ('Tek');
 
 INSERT INTO Termin (Naziv, Datum, SteviloMest, Zahtevnost, StarostnaSkupina, Spol, Opis, Prizorisceid_Prizorisce, Sportid_Sport, Uporabnikid_Organizator ) VALUES 
-('Ponedeljkov nogomet', '2026-09-18 19:00:00', 14, 'Začetnik', '18-25 let', 'Mešano',  'Redni termin za dvoranski nogomet', 1, 1, 2),
+('Ponedeljkov nogomet', '2026-09-12 19:00:00', 14, 'Začetnik', '18-25 let', 'Mešano',  'Redni termin za dvoranski nogomet (vsak 2. ponedeljek v mesecu)', 1, 1, 2),
 ('Četrtkov tenis', '2026-07-21 17:00:00', 4, 'Napredno', '18-25 let', 'Mešano', 'Samo za izkušene igralce', 2, 2, 3),
 ('Vikend košarka 3x3', '2026-11-23 10:00:00', 12, 'Srednje', '26-35 let', 'Mešano', 'Zbiramo se za hitri turnir', 3, 3, 1),
-('Odbojka na mivki', '2026-08-24 15:00:00', 8, 'Rekreativno', '18-25 let', 'Mešano', 'Zabavno igranje ob obali', 2, 4, 4),
+('Odbojka na mivki', '2026-08-24 15:00:00', 8, 'Rekreativno', '18-25 let', 'Mešano', 'ponavljajoč termin, vsak mesec 24.', 2, 4, 4),
 ('Večerni badminton', '2026-05-10 20:00:00', 4, 'Začetnik', '26-35 let', 'Moški', 'Igra dvojic, prinesite svoje loparje', 4, 5, 4),
 ('Intervalni šprinti', '2026-05-20 18:30:00', 10, 'Napredno', '36+ let', 'Moški', 'Kondicijski trening na tartanu', 5, 6, 5),
 ('Torkov nogomet', '2026-08-06 19:30:00', 10, 'Rekreativno', '26-35 let', 'Moški', 'Igra na umetni travi pod balonom', 6, 1, 6),
-('Jutranji tenis', '2026-06-06 08:00:00', 2, 'Rekreativno', '18-25 let', 'Mešano', 'Ena na ena na trdi podlagi', 3, 2, 5),
-('Petkov badminton mix', '2026-10-29 17:00:00', 8, 'Rekreativno', '36+ let',  'Mešano', 'Mešane dvojice, sproščeno igranje', 1, 5, 5),
-('Višinski tek', '2026-09-03 09:00:00', 6, 'Napredno', 'Do 18 let', 'Mešano', 'Trening vzdržljivosti v hipoksični komori', 2, 6, 6),
+('Jutranji tenis', '2026-06-06 08:00:00', 2, 'Rekreativno', '18-25 let', 'Mešano', 'Redni jutranji trening (poteka vsak torek in četrtek ob 08:00)', 3, 2, 5),
+('Petkov badminton mix', '2026-10-29 17:00:00', 8, 'Rekreativno', '36+ let',  'Mešano', 'Sproščeno igranje mešanih dvojic (poteka vsak zadnji petek v mesecu)', 1, 5, 5),
+('Višinski tek', '2026-09-03 09:00:00', 6, 'Napredno', 'Do 18 let', 'Mešano', 'Trening vzdržljivosti v hipoksični komori (poteka vsak prvi četrtek v mesecu)', 2, 6, 6),
 ('Nedeljska odbojka', '2026-12-05 16:00:00', 12, 'Srednje', '26-35 let', 'Ženske', 'Dvoranska odbojka, miks ekip', 5, 4, 2),
 ('Košarkarski večer', '2026-06-01 20:15:00', 15, 'Začetnik', 'Do 18 let', 'Ženske', 'Klasična košarka na celo igrišče', 4, 3, 1);
-
 
 INSERT INTO Ocena (Uporabnikid_Uporabnik, Uporabnikid_Organizator, Ocena, Opis, Terminid_Termin) VALUES 
 (1, 3, 5, 'Borut vedno najde najboljšo dvorano.', 1),
@@ -226,3 +226,9 @@ INSERT INTO Komentar (Uporabnikid_Uporabnik, Komentar, Terminid_Termin) VALUES
 (6, 'Super, končno termin blizu mene!', 5),
 (3, 'Lahko nekdo vzame s seboj tlačilko za žoge?', 8),
 (25, 'Pridem malo prej, da pomagam postaviti mrežo.', 7);
+
+UPDATE Termin SET RedniTermin = TRUE WHERE Naziv = 'Ponedeljkov nogomet';
+UPDATE Termin SET RedniTermin = TRUE WHERE Naziv = 'Odbojka na mivki';
+UPDATE Termin SET RedniTermin = TRUE WHERE Naziv = 'Jutranji tenis';
+UPDATE Termin SET RedniTermin = TRUE WHERE Naziv = 'Petkov badminton mix';
+UPDATE Termin SET RedniTermin = TRUE WHERE Naziv = 'Višinski tek';

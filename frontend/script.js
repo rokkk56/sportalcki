@@ -7,10 +7,18 @@
 ]; 
 */
 let activities = [];
-async function naloziAktivnosti() {
+async function naloziAktivnosti(redniTermini) {
   try {
-    const odgovor = await fetch('http://localhost:3000/api/aktivnosti'); 
-    
+    var odgovor = null;
+
+    if (redniTermini == true) {
+      odgovor = await fetch('http://localhost:3000/api/redniTermini');
+    }
+    else {
+      odgovor = await fetch('http://localhost:3000/api/aktivnosti');
+    }
+
+
     if (!odgovor.ok) {
       const napakaPodatki = await odgovor.json();
       console.error("Backend je vrnil napako:", napakaPodatki);
@@ -21,7 +29,7 @@ async function naloziAktivnosti() {
     activities = podatkiIzBaze.map(a => {
       let izpisanDatum = 'Neznano';
       let izpisanaUra = 'Neznano';
-      
+
       if (a.datum) {
         const d = new Date(a.datum);
         izpisanDatum = d.toLocaleDateString('sl-SI');
@@ -30,25 +38,25 @@ async function naloziAktivnosti() {
 
       return {
         id: a.id_termin,
-        title: a.naziv || 'Brez naziva',            
-        sport: a.sport || 'Aktivnost',              
-        venue: a.prizorisce || 'Neznano prizorišče', 
-        city: a.mesto || 'Neznano',                  
-        date: izpisanDatum,                          
-        time: izpisanaUra,                           
-        spots: a.stevilomest !== undefined ? a.stevilomest : 0, 
-        description: a.opis || 'Brez opisa',   
-        level: a.zahtevnost || 'Srednja', 
-        gender: a.spol || 'Mešano', 
-        age: a.starostnaskupina || 'Vsi',  
-        
-        emoji: a.sport === 'Nogomet' ? '⚽' : 
-               a.sport === 'Tenis' ? '🎾' : 
-               a.sport === 'Košarka' ? '🏀' : 
-               a.sport === 'Odbojka' ? '🏐' : 
-               a.sport === 'Badminton' ? '🏸' : '🏃',
-        org: a.organizator || 'Neznan organizator' 
-        };
+        title: a.naziv || 'Brez naziva',
+        sport: a.sport || 'Aktivnost',
+        venue: a.prizorisce || 'Neznano prizorišče',
+        city: a.mesto || 'Neznano',
+        date: izpisanDatum,
+        time: izpisanaUra,
+        spots: a.stevilomest !== undefined ? a.stevilomest : 0,
+        description: a.opis || 'Brez opisa',
+        level: a.zahtevnost || 'Srednja',
+        gender: a.spol || 'Mešano',
+        age: a.starostnaskupina || 'Vsi',
+
+        emoji: a.sport === 'Nogomet' ? '⚽' :
+          a.sport === 'Tenis' ? '🎾' :
+            a.sport === 'Košarka' ? '🏀' :
+              a.sport === 'Odbojka' ? '🏐' :
+                a.sport === 'Badminton' ? '🏸' : '🏃',
+        org: a.organizatorime + ' ' + a.organizatorpriimek || 'Neznan organizator'
+      };
     });
 
     renderActivities();
@@ -137,4 +145,4 @@ document.querySelectorAll('#search, #sport, #level, #gender, #age, #available').
   el.addEventListener('input', renderActivities);
   el.addEventListener('change', renderActivities);
 });
-naloziAktivnosti();
+

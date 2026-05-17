@@ -26,7 +26,7 @@ router.get("/", async (req, res) => {
             ON Prizorisceid_Prizorisce = id_Prizorisce
             JOIN Uporabnik
             ON Termin.Uporabnikid_Organizator = id_Uporabnik
-            WHERE Termin.RedniTermin = FALSE;
+            WHERE Termin.RedniTermin = TRUE;
             `);
 
             res.json(result.rows);

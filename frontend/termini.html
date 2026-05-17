@@ -16,12 +16,45 @@
 
   <main class="page">
     <section class="page-title"><p class="badge">Stalna družba</p><h1>Redni termini</h1><p>Aktivnosti, ki se ponavljajo vsak teden.</p></section>
-    <section class="activity-list">
-      <article class="activity-card"><div class="emoji">🏀</div><div><h2>Košarka vsak petek</h2><p>Maribor · vsak petek ob 19:30 · 2 prosta mesta</p><div class="tags"><span>Srednja</span><span>18-30</span><span>Mešano</span></div></div><button class="btn primary small">Prijavi se</button></article>
-      <article class="activity-card"><div class="emoji">⚽</div><div><h2>Nogomet ob sredah</h2><p>Celje · vsako sredo ob 20:00 · 4 prosta mesta</p><div class="tags"><span>Napredna</span><span>30+</span><span>Moški</span></div></div><button class="btn primary small">Prijavi se</button></article>
-      <article class="activity-card"><div class="emoji">🏐</div><div><h2>Odbojka na mivki</h2><p>Ljubljana · vsak torek ob 18:00 · 1 prosto mesto</p><div class="tags"><span>Začetnik</span><span>18-30</span><span>Mešano</span></div></div><button class="btn primary small">Prijavi se</button></article>
+    
+    <section class="filters card">
+      <input id="search" type="text" placeholder="Išči po športu ali kraju ..." />
+      <select id="sport">
+        <option value="">Vsi športi</option>
+        <option>Odbojka</option>
+        <option>Nogomet</option>
+        <option>Košarka</option>
+        <option>Tenis</option>
+        <option>Tek</option>
+      </select>
+      <select id="level">
+        <option value="">Vse ravni</option>
+        <option>Začetnik</option>
+        <option>Srednja</option>
+        <option>Napredna</option>
+      </select>
+      <select id="gender">
+        <option value="">Vsi spoli</option>
+        <option>Mešano</option>
+        <option>Moški</option>
+        <option>Ženske</option>
+      </select>
+      <select id="age">
+        <option value="">Vse starosti</option>
+        <option>15-18</option>
+        <option>18-30</option>
+        <option>30+</option>
+      </select>
+      <label class="check"><input id="available" type="checkbox" /> Samo prosta mesta</label>
     </section>
+    
+    <section id="activityList" class="activity-list"></section>
+
   </main>
   <footer>© 2026 ŠportniPartner.si · Projektna ekipa Športalčki</footer>
+    <script src="script.js"></script>
+  <script>
+    naloziAktivnosti(true);
+  </script>
 </body>
 </html>

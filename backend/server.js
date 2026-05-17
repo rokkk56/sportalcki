@@ -6,6 +6,7 @@ const aktivnostRoutes = require("./routes/aktivnostiRoutes");
 const organizatorjiRoutes = require("./routes/organizatorjiRoutes");
 const komentarjiRoutes = require("./routes/komentarjiRoutes");
 const sportiRoutes = require("./routes/sportiRoutes");
+const redniTerminiRoutes = require("./routes/redniTerminiRoutes");
 
 const app = express();
 app.use(express.static(path.join(__dirname, "../frontend")));
@@ -22,6 +23,7 @@ app.use("/api/aktivnosti", aktivnostRoutes);
 app.use("/api/organizatorji", organizatorjiRoutes);
 app.use("/api/komentarji", komentarjiRoutes);
 app.use("/api/sporti", sportiRoutes);
+app.use("/api/redniTermini", redniTerminiRoutes);
 
 
 app.listen(port, () => {
