@@ -13,7 +13,7 @@ CREATE TABLE Uporabnik(
     Password VARCHAR (255) NOT NULL,
     Email VARCHAR (255) UNIQUE NOT NULL,
     DatumRojstva TIMESTAMP,
-    Spol CHAR (1),
+    Spol VARCHAR (30),
     TipUporabnikaid_TipUporabnika INTEGER REFERENCES TipUporabnika(id_TipUporabnika)
 );
 CREATE TABLE Skupina (
@@ -43,8 +43,12 @@ CREATE TABLE Termin (
     Datum TIMESTAMP NOT NULL,
     SteviloMest INTEGER,
     Opis VARCHAR(255),
+    Zahtevnost VARCHAR (30),
+    StarostnaSkupina VARCHAR (255),
+    Spol VARCHAR (30),
     Prizorisceid_Prizorisce INTEGER REFERENCES Prizorisce(id_Prizorisce),
-    Sportid_Sport INTEGER REFERENCES Sport(id_Sport)
+    Sportid_Sport INTEGER REFERENCES Sport(id_Sport),
+    Uporabnikid_Organizator INTEGER REFERENCES Uporabnik(id_Uporabnik)
 );
 
 CREATE TABLE Ocena (
@@ -87,37 +91,37 @@ INSERT INTO TipUporabnika (Naziv, Opis) VALUES
 ('Organizator', 'Uporabnik, ki lahko ustvarja nove termine in upravlja skupine.');
 
 INSERT INTO Uporabnik (Ime, Priimek, Username, Password, Email, DatumRojstva, Spol, TipUporabnikaid_TipUporabnika) VALUES 
-('Anže', 'Novak', 'anze_n', 'geslo123', 'anze.novak@email.si', '1992-04-10', 'M', 1),
-('Maja', 'Korošec', 'maja_admin', 'admin_pass', 'maja.k@sport.si', '1988-11-20', 'Ž', 2),
-('Borut', 'Pahor', 'borut_org', 'org_pass', 'borut@klub.si', '1985-01-30', 'M', 3),
-('Luka', 'Dončič', 'luka77', 'basket123', 'luka@dallas.com', '1999-02-28', 'M', 1),
-('Sara', 'Zupan', 'sara_z', 'sara123', 'sara.zupan@gmail.com', '1996-07-15', 'Ž', 1),
-('Jan', 'Oblak', 'jan_o', 'oblak_wall', 'jan.oblak@atletico.es', '1993-01-07', 'M', 3),
-('Tina', 'Maze', 'tina_maze', 'ski_fast', 'tina@stave.si', '1983-05-02', 'Ž', 1),
-('Marko', 'Hribar', 'marko_h', 'marko123', 'marko.hribar@podjetje.si', '1990-12-12', 'M', 1),
-('Petra', 'Majdič', 'petra_m', 'tek_tek', 'petra.m@siol.net', '1979-12-22', 'Ž', 3),
-('Tadej', 'Pogačar', 'pogi_1', 'cycling_king', 'tadej@tour.fr', '1998-09-21', 'M', 1),
-('Matic', 'Horvat', 'matic_h', 'matic2026', 'matic.horvat@email.si', '1995-07-15', 'M', 1),
-('Lana', 'Zupančič', 'lana_z', 'varnogeslo', 'lana.zupan@email.si', '2001-02-28', 'Ž', 1),
-('Luka', 'Krajnc', 'luka_k', 'sifra99', 'luka.krajnc@email.si', '1990-12-05', 'M', 1),
-('Ema', 'Potočnik', 'ema_p', 'mojogeslo1', 'ema.potocnik@email.si', '2003-05-14', 'Ž', 1),
-('Rok', 'Kovačič', 'rok_kovac', 'rok_pass', 'rok.kovacic@email.si', '1987-09-22', 'M', 1),
-('Nika', 'Mlakar', 'nika_m', 'snezinka8', 'nika.mlakar@email.si', '1998-10-31', 'Ž', 3),
-('Tilen', 'Kralj', 'tilen_k', 'geslo1234', 'tilen.kralj@email.si', '1994-03-12', 'M', 1),
-('Sara', 'Zec', 'sara_m', 'sara_pass', 'sara.zec@email.si', '2000-08-19', 'Ž', 3),
-('Jan', 'Medved', 'jan_m', 'medo99', 'jan.medved@email.si', '2006-11-02', 'M', 1),
-('Mia', 'Hribar', 'mia_h', 'soncek2026', 'mia.hribar@email.si', '2004-01-25', 'Ž', 3),
-('Borut', 'Kavčič', 'borut_k', 'sifra777', 'borut.kavcic@email.si', '2005-05-30', 'M', 1),
-('Anja', 'Bizjak', 'anja_b', 'varno123', 'anja.bizjak@email.si', '2001-12-14', 'Ž', 3),
-('David', 'Kos', 'david_kos', 'david_p', 'david.kos@email.si', '2004-06-08', 'M', 1),
-('Zala', 'Vidmar', 'zala_v', 'metuljcek', 'zala.vidmar@email.si', '2002-09-21', 'Ž', 3),
-('Klemen', 'Pirc', 'klemen_p', 'klemen90', 'klemen.pirc@email.si', '2005-04-03', 'M', 1),
-('Teja', 'Gorenc', 'teja_g', 'gesloTeja', 'teja.gorenc@email.si', '2004-07-07', 'Ž', 3),
-('Gašper', 'Rozman', 'gasper_r', 'rozi2026', 'gasper.rozman@email.si', '1996-02-11', 'M', 1),
-('Neža', 'Leban', 'neza_l', 'skrivnost', 'neza.leban@email.si', '2001-10-18', 'Ž', 3),
-('Jure', 'Eržen', 'jure_e', 'jurepass', 'jure.erzen@email.si', '1999-08-24', 'M', 1),
-('Eva', 'Kastelic', 'eva_k', 'jesen2026', 'eva.kastelic@email.si', '2003-03-05', 'Ž', 3),
-('Urban', 'Turk', 'urban_t', 'urban123', 'urban.turk@email.si', '2005-11-12', 'M', 1);
+('Anže', 'Novak', 'anze_n', 'geslo123', 'anze.novak@email.si', '1992-04-10', 'Moški', 3),
+('Maja', 'Korošec', 'maja_admin', 'admin_pass', 'maja.k@sport.si', '1988-11-20', 'Ženska', 3),
+('Borut', 'Pahor', 'borut_org', 'org_pass', 'borut@klub.si', '1985-01-30', 'Moški', 3),
+('Luka', 'Dončič', 'luka77', 'basket123', 'luka@dallas.com', '1999-02-28', 'Moški', 3),
+('Sara', 'Zupan', 'sara_z', 'sara123', 'sara.zupan@gmail.com', '1996-07-15', 'Ženska', 3),
+('Jan', 'Oblak', 'jan_o', 'oblak_wall', 'jan.oblak@atletico.es', '1993-01-07', 'Moški', 3),
+('Tina', 'Maze', 'tina_maze', 'ski_fast', 'tina@stave.si', '1983-05-02', 'Ženska', 1),
+('Marko', 'Hribar', 'marko_h', 'marko123', 'marko.hribar@podjetje.si', '1990-12-12', 'Moški', 1),
+('Petra', 'Majdič', 'petra_m', 'tek_tek', 'petra.m@siol.net', '1979-12-22', 'Ženska', 1),
+('Tadej', 'Pogačar', 'pogi_1', 'cycling_king', 'tadej@tour.fr', '1998-09-21', 'Moški', 1),
+('Matic', 'Horvat', 'matic_h', 'matic2026', 'matic.horvat@email.si', '1995-07-15', 'Moški', 1),
+('Lana', 'Zupančič', 'lana_z', 'varnogeslo', 'lana.zupan@email.si', '2001-02-28', 'Ženska', 1),
+('Luka', 'Krajnc', 'luka_k', 'sifra99', 'luka.krajnc@email.si', '1990-12-05', 'Moški', 1),
+('Ema', 'Potočnik', 'ema_p', 'mojogeslo1', 'ema.potocnik@email.si', '2003-05-14', 'Ženska', 1),
+('Rok', 'Kovačič', 'rok_kovac', 'rok_pass', 'rok.kovacic@email.si', '1987-09-22', 'Moški', 1),
+('Nika', 'Mlakar', 'nika_m', 'snezinka8', 'nika.mlakar@email.si', '1998-10-31', 'Ženska', 3),
+('Tilen', 'Kralj', 'tilen_k', 'geslo1234', 'tilen.kralj@email.si', '1994-03-12', 'Moški', 1),
+('Sara', 'Zec', 'sara_m', 'sara_pass', 'sara.zec@email.si', '2000-08-19', 'Ženska', 1),
+('Jan', 'Medved', 'jan_m', 'medo99', 'jan.medved@email.si', '2006-11-02', 'Moški', 1),
+('Mia', 'Hribar', 'mia_h', 'soncek2026', 'mia.hribar@email.si', '2004-01-25', 'Ženska', 3),
+('Borut', 'Kavčič', 'borut_k', 'sifra777', 'borut.kavcic@email.si', '2005-05-30', 'Moški', 1),
+('Anja', 'Bizjak', 'anja_b', 'varno123', 'anja.bizjak@email.si', '2001-12-14', 'Ženska', 1),
+('David', 'Kos', 'david_kos', 'david_p', 'david.kos@email.si', '2004-06-08', 'Moški', 1),
+('Zala', 'Vidmar', 'zala_v', 'metuljcek', 'zala.vidmar@email.si', '2002-09-21', 'Ženska', 1),
+('Klemen', 'Pirc', 'klemen_p', 'klemen90', 'klemen.pirc@email.si', '2005-04-03', 'Moški', 1),
+('Teja', 'Gorenc', 'teja_g', 'gesloTeja', 'teja.gorenc@email.si', '2004-07-07', 'Ženska', 1),
+('Gašper', 'Rozman', 'gasper_r', 'rozi2026', 'gasper.rozman@email.si', '1996-02-11', 'Moški', 1),
+('Neža', 'Leban', 'neza_l', 'skrivnost', 'neza.leban@email.si', '2001-10-18', 'Ženska', 1),
+('Jure', 'Eržen', 'jure_e', 'jurepass', 'jure.erzen@email.si', '1999-08-24', 'Moški', 1),
+('Eva', 'Kastelic', 'eva_k', 'jesen2026', 'eva.kastelic@email.si', '2003-03-05', 'Ženska', 1),
+('Urban', 'Turk', 'urban_t', 'urban123', 'urban.turk@email.si', '2005-11-12', 'Moški', 1);
 
 INSERT INTO Skupina (Naziv, MaxStevilo) VALUES 
 ('Ljubljanski nogometaši', 20),
@@ -152,19 +156,19 @@ INSERT INTO Prizorisce (Naziv, Kapaciteta, Ulica, Mesto, Drzava, Opis) VALUES
 INSERT INTO Sport (Naziv) VALUES 
 ('Nogomet'), ('Tenis'), ('Košarka'), ('Odbojka'), ('Badminton'), ('Tek');
 
-INSERT INTO Termin (Naziv, Datum, SteviloMest, Opis, Prizorisceid_Prizorisce, Sportid_Sport) VALUES 
-('Ponedeljkov nogomet', '2026-09-18 19:00:00', 14, 'Redni termin za dvoranski nogomet', 1, 1),
-('Četrtkov tenis', '2026-07-21 17:00:00', 4, 'Samo za izkušene igralce', 2, 2),
-('Vikend košarka 3x3', '2026-11-23 10:00:00', 12, 'Zbiramo se za hitri turnir', 3, 3),
-('Odbojka na mivki', '2026-08-24 15:00:00', 8, 'Zabavno igranje ob obali', 2, 4),
-('Večerni badminton', '2026-05-10 20:00:00', 4, 'Igra dvojic, prinesite svoje loparje', 4, 5),
-('Intervalni šprinti', '2026-05-20 18:30:00', 10, 'Kondicijski trening na tartanu', 5, 6),
-('Torkov nogomet', '2026-08-06 19:30:00', 10, 'Igra na umetni travi pod balonom', 6, 1),
-('Jutranji tenis', '2026-06-06 08:00:00', 2, 'Ena na ena na trdi podlagi', 3, 2),
-('Petkov badminton mix', '2026-10-29 17:00:00', 8, 'Mešane dvojice, sproščeno igranje', 1, 5),
-('Višinski tek', '2026-09-03 09:00:00', 6, 'Trening vzdržljivosti v hipoksični komori', 2, 6),
-('Nedeljska odbojka', '2026-12-05 16:00:00', 12, 'Dvoranska odbojka, miks ekip', 5, 4),
-('Košarkarski večer', '2026-06-01 20:15:00', 15, 'Klasična košarka na celo igrišče', 4, 3);
+INSERT INTO Termin (Naziv, Datum, SteviloMest, Zahtevnost, StarostnaSkupina, Spol, Opis, Prizorisceid_Prizorisce, Sportid_Sport, Uporabnikid_Organizator ) VALUES 
+('Ponedeljkov nogomet', '2026-09-18 19:00:00', 14, 'Začetnik', '18-25 let', 'Mešano',  'Redni termin za dvoranski nogomet', 1, 1, 2),
+('Četrtkov tenis', '2026-07-21 17:00:00', 4, 'Napredno', '18-25 let', 'Mešano', 'Samo za izkušene igralce', 2, 2, 3),
+('Vikend košarka 3x3', '2026-11-23 10:00:00', 12, 'Srednje', '26-35 let', 'Mešano', 'Zbiramo se za hitri turnir', 3, 3, 1),
+('Odbojka na mivki', '2026-08-24 15:00:00', 8, 'Rekreativno', '18-25 let', 'Mešano', 'Zabavno igranje ob obali', 2, 4, 4),
+('Večerni badminton', '2026-05-10 20:00:00', 4, 'Začetnik', '26-35 let', 'Moški', 'Igra dvojic, prinesite svoje loparje', 4, 5, 4),
+('Intervalni šprinti', '2026-05-20 18:30:00', 10, 'Napredno', '36+ let', 'Moški', 'Kondicijski trening na tartanu', 5, 6, 5),
+('Torkov nogomet', '2026-08-06 19:30:00', 10, 'Rekreativno', '26-35 let', 'Moški', 'Igra na umetni travi pod balonom', 6, 1, 6),
+('Jutranji tenis', '2026-06-06 08:00:00', 2, 'Rekreativno', '18-25 let', 'Mešano', 'Ena na ena na trdi podlagi', 3, 2, 5),
+('Petkov badminton mix', '2026-10-29 17:00:00', 8, 'Rekreativno', '36+ let',  'Mešano', 'Mešane dvojice, sproščeno igranje', 1, 5, 5),
+('Višinski tek', '2026-09-03 09:00:00', 6, 'Napredno', 'Do 18 let', 'Mešano', 'Trening vzdržljivosti v hipoksični komori', 2, 6, 6),
+('Nedeljska odbojka', '2026-12-05 16:00:00', 12, 'Srednje', '26-35 let', 'Ženske', 'Dvoranska odbojka, miks ekip', 5, 4, 2),
+('Košarkarski večer', '2026-06-01 20:15:00', 15, 'Začetnik', 'Do 18 let', 'Ženske', 'Klasična košarka na celo igrišče', 4, 3, 1);
 
 
 INSERT INTO Ocena (Uporabnikid_Uporabnik, Uporabnikid_Organizator, Ocena, Opis, Terminid_Termin) VALUES 
