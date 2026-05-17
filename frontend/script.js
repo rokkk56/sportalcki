@@ -49,6 +49,9 @@ async function naloziAktivnosti(redniTermini) {
         level: a.zahtevnost || 'Srednja',
         gender: a.spol || 'Mešano',
         age: a.starostnaskupina || 'Vsi',
+        komentarTekst: a.komentartekst || '',
+        komentatorIme: a.komentatorime || '',
+        komentatorPriimek: a.komentatorpriimek || '',
 
         emoji: a.sport === 'Nogomet' ? '⚽' :
           a.sport === 'Tenis' ? '🎾' :
@@ -59,6 +62,7 @@ async function naloziAktivnosti(redniTermini) {
       };
     });
 
+    console.log(activities);
     renderActivities();
 
   } catch (napaka) {
@@ -89,8 +93,20 @@ function renderActivities() {
     (!age || a.age === age) &&
     (!available || a.spots > 0)
   );
+  list.innerHTML = filtered.map((a, index) => {
+  let komentarHTML = '';
+    if (a.komentarTekst) {
+      komentarHTML = `
+        <div class="feedback-box">
+          <h6>Povratne informacije:</h6>
+          <p class="comment-text">
+            <strong>${a.komentatorIme} ${a.komentatorPriimek}:</strong> "${a.komentarTekst}"
+          </p>
+        </div>
+      `;
+    }
 
-  list.innerHTML = filtered.map((a, index) => `
+    return `
     <article class="activity-card">
       <div class="emoji">${a.emoji}</div>
       <div class="activity-info">
@@ -103,6 +119,7 @@ function renderActivities() {
           <span>${a.age}</span>
           <span>${a.spots} prostih mest</span>
         </div>
+        ${komentarHTML}
       </div>
       <div class="activity-buttons">
         <button onclick="toggleJoin(this)" class="btn ${a.spots > 0 ? 'primary' : 'disabled'} small" ${a.spots === 0 ? 'disabled' : ''}>
@@ -110,7 +127,7 @@ function renderActivities() {
         </button>
       </div>
        <button onclick="toggleHeart(this)" class="heart-btn">♡</button>
-    </article>`).join('') || '<p class="empty">Ni najdenih aktivnosti za izbrane filtre.</p>';
+    </article>`;}).join('') || '<p class="empty">Ni najdenih aktivnosti za izbrane filtre.</p>';
 }
 
 function toggleJoin(button) {

@@ -489,3 +489,29 @@ footer {
   color: red;
 }
 
+.feedback-box {
+  margin-top: 14px;
+  background-color: #f8f9fa;
+  border-left: 4px solid #1d4ed8;
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+
+.feedback-box h6 {
+  margin: 0 0 4px 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #495057;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.comment-text {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #212529;
+}
+
+.comment-text strong {
+  color: #495057;
+}
