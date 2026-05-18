@@ -7,55 +7,78 @@
 ]; 
 */
 let activities = [];
-async function naloziAktivnosti(redniTermini) {
+
+async function naloziAktivnosti(redniTermini = false) {
   try {
-    var odgovor = null;
+    const search = document.getElementById("search") ? document.getElementById("search").value : "";
+    const sport = document.getElementById("sport") ? document.getElementById("sport").value : "";
+    const level = document.getElementById("level") ? document.getElementById("level").value : "";
+    const gender = document.getElementById("gender") ? document.getElementById("gender").value : "";
+    const age = document.getElementById("age") ? document.getElementById("age").value : "";
+    const available = document.getElementById("available") ? document.getElementById("available").checked : false;
+
+    const params = new URLSearchParams();
+
+    if (search) params.append("search", search);
+    if (sport) params.append("sport", sport);
+    if (level) params.append("level", level);
+    if (gender) params.append("gender", gender);
+    if (age) params.append("age", age);
+    if (available) params.append("available", "true");
+
+    let odgovor = null;
 
     if (redniTermini == true) {
-      odgovor = await fetch('http://localhost:3000/api/redniTermini');
+      odgovor = await fetch("http://localhost:3000/api/redniTermini");
+    } else {
+      odgovor = await fetch("http://localhost:3000/api/aktivnosti?" + params.toString());
     }
-    else {
-      odgovor = await fetch('http://localhost:3000/api/aktivnosti');
-    }
-
 
     if (!odgovor.ok) {
       const napakaPodatki = await odgovor.json();
       console.error("Backend je vrnil napako:", napakaPodatki);
       throw new Error(napakaPodatki.napaka || "Neznana napaka na strežniku.");
     }
+
     const podatkiIzBaze = await odgovor.json();
 
-    activities = podatkiIzBaze.map(a => {
-      let izpisanDatum = 'Neznano';
-      let izpisanaUra = 'Neznano';
+    activities = podatkiIzBaze.map(function (a) {
+      let izpisanDatum = "Neznano";
+      let izpisanaUra = "Neznano";
 
       if (a.datum) {
         const d = new Date(a.datum);
-        izpisanDatum = d.toLocaleDateString('sl-SI');
-        izpisanaUra = d.toLocaleTimeString('sl-SI', { hour: '2-digit', minute: '2-digit' });
+        izpisanDatum = d.toLocaleDateString("sl-SI");
+        izpisanaUra = d.toLocaleTimeString("sl-SI", {
+          hour: "2-digit",
+          minute: "2-digit"
+        });
       }
 
       return {
         id: a.id_termin,
-        title: a.naziv || 'Brez naziva',
-        sport: a.sport || 'Aktivnost',
-        venue: a.prizorisce || 'Neznano prizorišče',
-        city: a.mesto || 'Neznano',
+        title: a.naziv || "Brez naziva",
+        sport: a.sport || "Aktivnost",
+        venue: a.prizorisce || "Neznano prizorišče",
+        city: a.mesto || "Neznano",
         date: izpisanDatum,
         time: izpisanaUra,
         spots: a.stevilomest !== undefined ? a.stevilomest : 0,
-        description: a.opis || 'Brez opisa',
-        level: a.zahtevnost || 'Srednja',
-        gender: a.spol || 'Mešano',
-        age: a.starostnaskupina || 'Vsi',
+        description: a.opis || "Brez opisa",
+        level: a.zahtevnost || "Srednja",
+        gender: a.spol || "Mešano",
+        age: a.starostnaskupina || "Vsi",
+        komentarTekst: a.komentartekst || "",
+        komentatorIme: a.komentatorime || "",
+        komentatorPriimek: a.komentatorpriimek || "",
 
-        emoji: a.sport === 'Nogomet' ? '⚽' :
-          a.sport === 'Tenis' ? '🎾' :
-            a.sport === 'Košarka' ? '🏀' :
-              a.sport === 'Odbojka' ? '🏐' :
-                a.sport === 'Badminton' ? '🏸' : '🏃',
-        org: a.organizatorime + ' ' + a.organizatorpriimek || 'Neznan organizator'
+        emoji: a.sport === "Nogomet" ? "⚽" :
+          a.sport === "Tenis" ? "🎾" :
+          a.sport === "Košarka" ? "🏀" :
+          a.sport === "Odbojka" ? "🏐" :
+          a.sport === "Badminton" ? "🏸" : "🏃",
+
+        org: (a.organizatorime || "") + " " + (a.organizatorpriimek || "")
       };
     });
 
@@ -63,12 +86,15 @@ async function naloziAktivnosti(redniTermini) {
 
   } catch (napaka) {
     console.error("Ujeta napaka v aplikaciji:", napaka.message);
-    const list = document.getElementById('activityList');
+
+    const list = document.getElementById("activityList");
+
     if (list) {
       list.innerHTML = `<p class="empty">Napaka pri nalaganju: ${napaka.message}</p>`;
     }
   }
 }
+
 
 function renderActivities() {
   const list = document.getElementById('activityList');
@@ -141,8 +167,13 @@ function showSuccess(event) {
   document.getElementById('success').classList.remove('hidden');
 }
 
-document.querySelectorAll('#search, #sport, #level, #gender, #age, #available').forEach(el => {
-  el.addEventListener('input', renderActivities);
-  el.addEventListener('change', renderActivities);
+document.querySelectorAll("#search, #sport, #level, #gender, #age, #available").forEach(function (el) {
+  el.addEventListener("input", function () {
+    naloziAktivnosti(false);
+  });
+
+  el.addEventListener("change", function () {
+    naloziAktivnosti(false);
+  });
 });
 

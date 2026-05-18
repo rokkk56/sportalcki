@@ -27,33 +27,45 @@
 
     <section class="filters card">
       <input id="search" type="text" placeholder="Išči po športu ali kraju ..." />
+
       <select id="sport">
         <option value="">Vsi športi</option>
-        <option>Odbojka</option>
-        <option>Nogomet</option>
-        <option>Košarka</option>
-        <option>Tenis</option>
-        <option>Tek</option>
+        <option value="Odbojka">Odbojka</option>
+        <option value="Nogomet">Nogomet</option>
+        <option value="Košarka">Košarka</option>
+        <option value="Tenis">Tenis</option>
+        <option value="Tek">Tek</option>
       </select>
+
+      <input id="date" type="date" />
+
       <select id="level">
         <option value="">Vse ravni</option>
-        <option>Začetnik</option>
-        <option>Srednja</option>
-        <option>Napredna</option>
+        <option value="Začetnik">Začetnik</option>
+        <option value="Srednje">Srednje</option>
+        <option value="Napredno">Napredno</option>
+        <option value="Rekreativno">Rekreativno</option>
       </select>
+
       <select id="gender">
         <option value="">Vsi spoli</option>
-        <option>Mešano</option>
-        <option>Moški</option>
-        <option>Ženske</option>
+        <option value="Mešano">Mešano</option>
+        <option value="Moški">Moški</option>
+        <option value="Ženske">Ženske</option>
       </select>
+
       <select id="age">
         <option value="">Vse starosti</option>
-        <option>15-18</option>
-        <option>18-30</option>
-        <option>30+</option>
+        <option value="Do 18 let">Do 18 let</option>
+        <option value="18-25 let">18-25 let</option>
+        <option value="26-35 let">26-35 let</option>
+        <option value="36+ let">36+ let</option>
       </select>
-      <label class="check"><input id="available" type="checkbox" /> Samo prosta mesta</label>
+
+      <label class="check">
+        <input id="available" type="checkbox" /> 
+        Samo prosta mesta
+      </label>
     </section>
 
     <section id="activityList" class="activity-list"></section>
