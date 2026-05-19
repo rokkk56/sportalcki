@@ -7,6 +7,11 @@ const { JWT_SECRET } = require("../middleware/authMiddleware");
 
 router.post("/login", async (req, res) => {
     const { username, password } = req.body;
+ if (!username || !password)   {
+     return res.status(400).json({
+         napaka: "Vnesi uporabniško ime in geslo."
+     });
+ }
 
     try {
         const result = await pool.query(`

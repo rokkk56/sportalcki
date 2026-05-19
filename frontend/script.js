@@ -175,6 +175,9 @@ if (loginForm) {
     const password = document.getElementById("password").value;
     const message = document.getElementById("loginMessage");
 
+    message.textContent = "";
+    message.classList.add("hidden");
+
     try {
       const odgovor = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
@@ -188,10 +191,10 @@ if (loginForm) {
       });
 
       const podatki = await odgovor.json();
-      console.log(podatki);
+      console.log("ODGOVOR IZ BACKENDA:", podatki);
 
       if (!odgovor.ok) {
-        message.textContent = podatki.napaka;
+        message.textContent = podatki.napaka || "Prijava ni uspela.";
         message.classList.remove("hidden");
         return;
       }
@@ -199,13 +202,16 @@ if (loginForm) {
       localStorage.setItem("token", podatki.token);
       localStorage.setItem("uporabnik", JSON.stringify(podatki.uporabnik));
 
-      if (podatki.uporabnik.tip === "Administrator") {
+      const tip = podatki.uporabnik.tip.toLowerCase().trim();
+
+      if (tip === "Administrator") {
         window.location.href = "admin.html";
       } else {
         window.location.href = "profil.html";
       }
 
     } catch (err) {
+      console.error(err);
       message.textContent = "Napaka pri povezavi s strežnikom.";
       message.classList.remove("hidden");
     }
@@ -333,5 +339,6 @@ async function urediAktivnost(id, starNaziv, staraMesta, starOpis, staraZahtevno
 
   naloziAdminAktivnosti();
 }
-
-naloziAdminAktivnosti();
+if (document.getElementById("adminActivityList")) {
+  naloziAdminAktivnosti();
+}

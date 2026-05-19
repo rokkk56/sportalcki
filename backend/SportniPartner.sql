@@ -232,3 +232,8 @@ UPDATE Termin SET RedniTermin = TRUE WHERE Naziv = 'Odbojka na mivki';
 UPDATE Termin SET RedniTermin = TRUE WHERE Naziv = 'Jutranji tenis';
 UPDATE Termin SET RedniTermin = TRUE WHERE Naziv = 'Petkov badminton mix';
 UPDATE Termin SET RedniTermin = TRUE WHERE Naziv = 'Višinski tek';
+
+INSERT INTO Uporabnik
+(Ime, Priimek, Username, Password, Email, DatumRojstva, Spol, TipUporabnikaid_TipUporabnika)
+VALUES
+    ('Admin', 'Test', 'admin', 'admin123', 'admin@test.si', '1999-01-01', 'Moški', 2);
