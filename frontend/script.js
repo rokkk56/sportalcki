@@ -342,3 +342,97 @@ async function urediAktivnost(id, starNaziv, staraMesta, starOpis, staraZahtevno
 if (document.getElementById("adminActivityList")) {
   naloziAdminAktivnosti();
 }
+
+//nalozi komentarje
+async function naloziKomentarje() {
+  const container = document.getElementById("komentarji");
+  if(!container) return;
+
+  const odgovor = await fetch(`${API_URL}/komentarji`);
+  const komentarji = await odgovor.json();
+
+  container.innerHTML = "";
+
+  komentarji.forEach(k => {
+    container.innerHTML += `
+    <div class="card">
+      <p><b>${k.ime} ${k.priimek}:</b> ${k.komentar}</p>
+      <small>${k.termin ? "Termin: " + k.termin : "Splošen komentar"}</small>
+      </div>
+      `;
+  });
+}
+
+const komentarForm = document.getElementById("komentarForm");
+
+if (komentarForm) {
+  komentarForm.addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const token = localStorage.getItem("token");
+    const komentar = document.getElementById("komentarInput").value;
+    const sporocilo = document.getElementById("komentarSporocilo");
+
+    if(!token){
+      sporocilo.textContent= "Za dodajanje komentarja se moraš prijaviti.";
+      return;
+    }
+
+    const odgovor = await fetch(`${API_URL}/komentarji`, {
+      method: "POST",
+      headers : {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        komentar: komentar,
+        terminId : null
+      })
+    });
+
+    if(!odgovor.ok){
+      sporocilo.textContent = "Napaka pri dodajanju komentarja.";
+      return;
+    }
+
+    document.getElementById("komentarInput").value= "";
+    sporocilo.textContent = "Komentar dodan.";
+
+    naloziKomentarje();
+  });
+}
+
+naloziKomentarje();
+
+async function naloziMojeKomentarje() {
+  const container = document.getElementById("mojiKomentarji");
+  if(!container) return;
+
+  const token = localStorage.getItem("token");
+
+  if(!token){
+    container.innerHTML = "<p>Za ogled komentarjev se moraš prijaviti.</p>";
+    return;
+  }
+
+  const odgovor = await fetch(`${API_URL}/komentarji/moji`, {
+    headers: {
+      "Authorization" : `Bearer ${token}`
+    }
+  });
+
+  const komentarji = await odgovor.json();
+
+  container.innerHTML = "";
+
+  komentarji.forEach(k =>{
+    container.innerHTML += `
+    <div class="card">
+      <p>${k.komentar}</p>
+      <small>${k.termin ? "Termin: " + k.termin : "Splošen komentar"}</small>
+      </div>
+      `;
+  });
+}
+
+naloziMojeKomentarje();

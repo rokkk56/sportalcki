@@ -237,3 +237,7 @@ INSERT INTO Uporabnik
 (Ime, Priimek, Username, Password, Email, DatumRojstva, Spol, TipUporabnikaid_TipUporabnika)
 VALUES
     ('Admin', 'Test', 'admin', 'admin123', 'admin@test.si', '1999-01-01', 'Moški', 2);
+
+--Poskus ali se doda komentar
+SELECT * FROM Komentar
+ORDER BY id_Komentar DESC;
