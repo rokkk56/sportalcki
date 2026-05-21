@@ -7,6 +7,7 @@
 ]; 
 */
 let activities = [];
+let vseckaniOrganizatorji =[];
 async function naloziAktivnosti(redniTermini) {
   try {
     var odgovor = null;
@@ -38,6 +39,7 @@ async function naloziAktivnosti(redniTermini) {
 
       return {
         id: a.id_termin,
+        organizatorId: a.organizator_id,
         title: a.naziv || 'Brez naziva',
         sport: a.sport || 'Aktivnost',
         venue: a.prizorisce || 'Neznano prizorišče',
@@ -63,6 +65,7 @@ async function naloziAktivnosti(redniTermini) {
     });
 
     console.log(activities);
+    await pridobiVseckaneIds();
     renderActivities();
 
   } catch (napaka) {
@@ -105,6 +108,7 @@ function renderActivities() {
         </div>
       `;
     }
+    const jeVseckan = vseckaniOrganizatorji.includes(a.organizatorId);
 
     return `
     <article class="activity-card">
@@ -126,7 +130,7 @@ function renderActivities() {
           ${a.spots > 0 ? 'Prijavi se' : 'Polno'}
         </button>
       </div>
-       <button onclick="toggleHeart(this)" class="heart-btn">♡</button>
+       <button onclick="toggleHeart(this, ${a.organizatorId})" class="heart-btn ${jeVseckan ? 'liked' : ''}">${jeVseckan ? '♥' : '♡'}</button>
     </article>`;}).join('') || '<p class="empty">Ni najdenih aktivnosti za izbrane filtre.</p>';
 }
 
@@ -436,3 +440,88 @@ async function naloziMojeKomentarje() {
 }
 
 naloziMojeKomentarje();
+
+async function naloziVseckaneOrganizatorje() {
+  const container = document.getElementById("vseckaniOrganizatorji");
+  if(!container) return;
+
+  const token = localStorage.getItem("token");
+
+  if(!token){
+    container.innerHTML = "<p>Za ogled všečkanih organizatorjev se moraš prijaviti.</p>";
+    return;
+  }
+
+  const odgovor = await fetch(`${API_URL}/organizatorji/vseckani`, {
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  const podatki = await odgovor.json();
+
+  container.innerHTML = "";
+
+  podatki.forEach(o => {
+    container.innerHTML +=`
+    <div class="notification">
+      <div>
+        <b>${o.ime} ${o.priimek}</b>
+        <p>@${o.username}</p>
+        <small>
+          ${o.terminnaziv ? "Prihodnja aktivnost: " + o.terminnaziv : "Ni prihodnjih aktivnosti."}
+        </small>
+      </div>
+    </div>`;
+  });
+}
+
+naloziVseckaneOrganizatorje();
+
+async function  toggleHeart(button, organizatorId) {
+  const token = localStorage.getItem("token");
+
+  if(!token){
+    alert("Za všečkanje organizatorja se moraš prijaviti.");
+    return;
+  }
+
+  button.classList.toggle("liked");
+  const jeVseckan = button.classList.contains("liked");
+
+  button.textContent = jeVseckan ? "♥" : "♡";
+
+  await fetch (jeVseckan
+    ? `${API_URL}/organizatorji/vseckani` :
+    `${API_URL}/organizatorji/vseckani/${organizatorId}`,
+    {
+      method: jeVseckan ? "POST" : "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: jeVseckan
+      ? JSON.stringify({organizatorId})
+      : null
+    }
+  );
+}
+
+async function pridobiVseckaneIds() {
+  const token = localStorage.getItem("token");
+
+  if(!token) {
+    vseckaniOrganizatorji = [];
+    return;
+  }
+
+  const odgovor = await fetch(`${API_URL}/organizatorji/vseckani`, {
+    headers: {
+      "Authorization" : `Bearer ${token}`
+    }
+  });
+
+  const podatki = await odgovor.json();
+
+  vseckaniOrganizatorji = podatki.map(o => o.id_uporabnik);
+}

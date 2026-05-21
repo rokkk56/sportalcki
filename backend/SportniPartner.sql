@@ -85,6 +85,13 @@ CREATE TABLE Komentar (
     Terminid_Termin INTEGER REFERENCES Termin(id_Termin) NULL
 );
 
+CREATE TABLE VseckaniOrganizator (
+    id_VseckanOrganizator SERIAL PRIMARY KEY ,
+    Uporabnikid_Uporabnik INTEGER REFERENCES Uporabnik(id_Uporabnik) ON DELETE CASCADE,
+    Organizatorid_Uporabnik INTEGER REFERENCES Uporabnik(id_Uporabnik) ON DELETE CASCADE,
+    UNIQUE (Uporabnikid_Uporabnik, Organizatorid_Uporabnik)
+);
+
 -- VNOS PODATKOV
 INSERT INTO TipUporabnika (Naziv, Opis) VALUES
 ('Uporabnik', 'Registrirani uporabnik, ki se lahko prijavi/odjavi od termina'),
@@ -241,3 +248,5 @@ VALUES
 --Poskus ali se doda komentar
 SELECT * FROM Komentar
 ORDER BY id_Komentar DESC;
+
+SELECT * FROM VseckaniOrganizator;
