@@ -515,13 +515,27 @@ async function pridobiVseckaneIds() {
     return;
   }
 
+  try{
   const odgovor = await fetch(`${API_URL}/organizatorji/vseckani`, {
     headers: {
       "Authorization" : `Bearer ${token}`
     }
   });
 
+  if(!odgovor.ok){
+    vseckaniOrganizatorji = [];
+    return;
+  }
+
   const podatki = await odgovor.json();
 
+  if(!Array.isArray(podatki)) {
+    vseckaniOrganizatorji = [];
+    return;
+  }
+
   vseckaniOrganizatorji = podatki.map(o => o.id_uporabnik);
+}catch (err){
+  vseckaniOrganizatorji = [];
+}
 }
