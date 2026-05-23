@@ -100,13 +100,13 @@ INSERT INTO TipUporabnika (Naziv, Opis) VALUES
 
 INSERT INTO Uporabnik (Ime, Priimek, Username, Password, Email, DatumRojstva, Spol, TipUporabnikaid_TipUporabnika) VALUES 
 ('Anže', 'Novak', 'anze_n', 'geslo123', 'anze.novak@email.si', '1992-04-10', 'Moški', 3),
-('Maja', 'Korošec', 'maja_admin', 'admin_pass', 'maja.k@sport.si', '1988-11-20', 'Ženska', 3),
+('Maja', 'Korošec', 'maja_admin', 'admin_pass', 'maja.k@sport.si', '1988-11-20', 'Ženska', 2),
 ('Borut', 'Pahor', 'borut_org', 'org_pass', 'borut@klub.si', '1985-01-30', 'Moški', 3),
 ('Luka', 'Dončič', 'luka77', 'basket123', 'luka@dallas.com', '1999-02-28', 'Moški', 3),
 ('Sara', 'Zupan', 'sara_z', 'sara123', 'sara.zupan@gmail.com', '1996-07-15', 'Ženska', 3),
 ('Jan', 'Oblak', 'jan_o', 'oblak_wall', 'jan.oblak@atletico.es', '1993-01-07', 'Moški', 3),
 ('Tina', 'Maze', 'tina_maze', 'ski_fast', 'tina@stave.si', '1983-05-02', 'Ženska', 1),
-('Marko', 'Hribar', 'marko_h', 'marko123', 'marko.hribar@podjetje.si', '1990-12-12', 'Moški', 1),
+('Marko', 'Hribar', 'marko_h', 'marko123', 'marko.hribar@podjetje.si', '1990-12-12', 'Moški', 2),
 ('Petra', 'Majdič', 'petra_m', 'tek_tek', 'petra.m@siol.net', '1979-12-22', 'Ženska', 1),
 ('Tadej', 'Pogačar', 'pogi_1', 'cycling_king', 'tadej@tour.fr', '1998-09-21', 'Moški', 1),
 ('Matic', 'Horvat', 'matic_h', 'matic2026', 'matic.horvat@email.si', '1995-07-15', 'Moški', 1),
@@ -250,3 +250,12 @@ SELECT * FROM Komentar
 ORDER BY id_Komentar DESC;
 
 SELECT * FROM VseckaniOrganizator;
+
+--poskus adminov
+SELECT
+    u.username,
+    u.password,
+    t.naziv AS tip
+FROM uporabnik u
+         JOIN tipuporabnika t
+              ON u.tipuporabnikaid_tipuporabnika = t.id_tipuporabnika;

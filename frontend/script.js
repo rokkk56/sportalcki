@@ -539,3 +539,171 @@ async function pridobiVseckaneIds() {
   vseckaniOrganizatorji = [];
 }
 }
+
+//uporabnosti admina
+async function naloziAdminStran() {
+  const oglasiBox = document.getElementById("adminOglasi");
+  const komentarjiBox = document.getElementById("adminKomentarji");
+
+  if (!oglasiBox || !komentarjiBox) return;
+
+  const token = localStorage.getItem("token");
+  const uporabnik = JSON.parse(localStorage.getItem("uporabnik"));
+
+  if (
+      !token ||
+      !uporabnik ||
+      uporabnik.tip !== "Administrator"
+  ) {
+    window.location.href = "prijava.html";
+    return;
+  }
+
+  await naloziAdminOglase();
+  await naloziAdminKomentarje();
+}
+
+async function naloziAdminOglase() {
+  const oglasiBox = document.getElementById("adminOglasi");
+  const token = localStorage.getItem("token");
+
+  const odgovor = await fetch("http://localhost:3000/api/admin/oglasi", {
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  const oglasi = await odgovor.json();
+
+  if (!odgovor.ok) {
+    oglasiBox.innerHTML = `<p class="empty">${oglasi.napaka}</p>`;
+    return;
+  }
+
+  oglasiBox.innerHTML = oglasi.map(o => `
+    <article class="activity-card">
+      <div class="emoji">${vrniIkonoSporta(o.sport)}</div>
+
+      <div class="activity-info">
+        <h2>${o.naziv}</h2>
+        <p>${o.sport} · ${o.prizorisce}, ${o.mesto}</p>
+        <p>${new Date(o.datum).toLocaleDateString("sl-SI")}</p>
+        <p>${o.opis || "Brez opisa"}</p>
+
+        <div class="tags">
+          <span>${o.zahtevnost}</span>
+          <span>${o.stevilomest} prostih mest</span>
+          <span>${o.organizatorime} ${o.organizatorpriimek}</span>
+        </div>
+      </div>
+
+      <div>
+        <button class="btn secondary small" onclick="urediAdminOglas(${o.id_termin}, '${o.naziv}', '${o.opis || ""}', ${o.stevilomest}, '${o.zahtevnost}')">
+          Uredi
+        </button>
+
+        <button class="btn danger small" onclick="izbrisiAdminOglas(${o.id_termin})">
+          Izbriši
+        </button>
+      </div>
+    </article>
+  `).join("");
+}
+
+async function naloziAdminKomentarje() {
+  const komentarjiBox = document.getElementById("adminKomentarji");
+  const token = localStorage.getItem("token");
+
+  const odgovor = await fetch("http://localhost:3000/api/admin/komentarji", {
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  const komentarji = await odgovor.json();
+
+  if (!odgovor.ok) {
+    komentarjiBox.innerHTML = `<p class="empty">${komentarji.napaka}</p>`;
+    return;
+  }
+
+  komentarjiBox.innerHTML = komentarji.map(k => `
+    <article class="activity-card">
+      <div class="emoji">💬</div>
+
+      <div class="activity-info">
+        <h2>${k.username}</h2>
+        <p>${k.vsebina}</p>
+        <p>Aktivnost: ${k.termin}</p>
+        <p>${new Date(k.datum).toLocaleDateString("sl-SI")}</p>
+      </div>
+
+      <div>
+        <button class="btn danger small" onclick="izbrisiAdminKomentar(${k.id_komentar})">
+          Izbriši
+        </button>
+      </div>
+    </article>
+  `).join("");
+}
+
+async function izbrisiAdminOglas(id) {
+  const token = localStorage.getItem("token");
+
+  if (!confirm("Ali res želiš izbrisati ta oglas?")) return;
+
+  await fetch(`http://localhost:3000/api/admin/oglasi/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  naloziAdminOglase();
+}
+
+async function urediAdminOglas(id, starNaziv, starOpis, staraMesta, staraZahtevnost) {
+  const token = localStorage.getItem("token");
+
+  const naziv = prompt("Naziv oglasa:", starNaziv);
+  const opis = prompt("Opis oglasa:", starOpis);
+  const steviloMest = prompt("Število mest:", staraMesta);
+  const zahtevnost = prompt("Zahtevnost:", staraZahtevnost);
+
+  if (!naziv || !steviloMest || !zahtevnost) return;
+
+  await fetch(`http://localhost:3000/api/admin/oglasi/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      naziv,
+      opis,
+      steviloMest,
+      zahtevnost
+    })
+  });
+
+  naloziAdminOglase();
+}
+
+async function izbrisiAdminKomentar(id) {
+  const token = localStorage.getItem("token");
+
+  if (!confirm("Ali res želiš izbrisati komentar?")) return;
+
+  await fetch(`http://localhost:3000/api/admin/komentarji/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  naloziAdminKomentarje();
+}
+
+if (document.getElementById("adminOglasi")) {
+  naloziAdminStran();
+}
