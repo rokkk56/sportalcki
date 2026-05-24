@@ -85,4 +85,23 @@ router.put("/:id", preveriToken, preveriAdmina, async (req, res) => {
     }
 });
 
+router.post("/dodaj", preveriToken, async (req,res) => {
+    try{
+        const uporabnikId = req.uporabnik.id;
+        const {naziv, datum, stevilomest, opis, zahtevnost, starostnaskupina, spol, prizorisceid, sportid, rednitermin} = req.body;
+
+        const result = await pool.query(`
+            INSERT INTO Termin
+            (naziv, datum, stevilomest, opis, zahtevnost, starostnaskupina, spol, 
+                prizorisceid_prizorisce, sportid_sport, uporabnikid_organizator, rednitermin)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+            RETURNING * `,
+        [naziv, datum, stevilomest, opis, zahtevnost, starostnaskupina, spol, prizorisceid, sportid, uporabnikId, rednitermin]);
+
+        res.status(201).json(result.rows[0])
+    }catch (err){
+        res.status(500).json({napaka: err.message});
+    }
+});
+
 module.exports = router;

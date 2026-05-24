@@ -7,7 +7,8 @@ CREATE DATABASE sportnipartner OWNER sportni_user;
 
 GRANT CONNECT ON DATABASE sportnipartner TO sportni_user;
 GRANT ALL PRIVILEGES ON DATABASE sportnipartner TO sportni_user;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO sportni_user;
+GRANT SELECT, INSERT ON ALL TABLES IN SCHEMA public TO sportni_user;
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE termin_id_termin_seq TO sportni_user;
 
 SELECT * FROM pg_roles WHERE rolname = 'sportni_user';
 SELECT * FROM pg_database WHERE datname = 'sportnipartner';

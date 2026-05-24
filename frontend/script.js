@@ -707,3 +707,55 @@ async function izbrisiAdminKomentar(id) {
 if (document.getElementById("adminOglasi")) {
   naloziAdminStran();
 }
+
+
+const dodajTerminForm = document.getElementById("activityForm");
+
+if (dodajTerminForm) {
+  dodajTerminForm.addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const token = localStorage.getItem("token");
+    const dateInput = document.getElementById('datum').value;
+    const timeInput = document.getElementById('ura').value;
+    const sqlDateTime = `${dateInput} ${timeInput}:00`;
+    const successMessage = document.getElementById("successMessage");
+
+    if(!token){
+      sporocilo.textContent= "Za objavo termina se moraš prijaviti.";
+      return;
+    }
+
+    const odgovor = await fetch(`${API_URL}/aktivnosti/dodaj`, {
+      method: "POST",
+      headers : {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        naziv: document.getElementById("naslov").value,
+        datum: sqlDateTime,
+        stevilomest: document.getElementById("mesta").value,
+        opis: document.getElementById("opis").value,
+        zahtevnost: document.getElementById("zahtevnost").value,
+        starostnaskupina: document.getElementById("starost").value,
+        spol: document.getElementById("spol").value,
+        prizorisceid: document.getElementById("prizorisce").value,
+        sportid: 1,
+        rednitermin: document.getElementById("redno").checked
+      })
+    });
+
+    if(!odgovor.ok){
+      console.log(odgovor.json())
+      successMessage.textContent = "Napaka pri dodajanju aktivnosti.";
+      successMessage.classList.remove('hidden');
+      return;
+    }
+
+    successMessage.textContent = "Aktivnost je bila uspešno objavljena.";
+    successMessage.classList.remove('hidden');
+    dodajTerminForm.reset();
+
+  });
+}
