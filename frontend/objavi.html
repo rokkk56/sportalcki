@@ -51,9 +51,9 @@
       <div class="two">
 
         <div>
-          <label for="ikona">Ikona oglasa</label>
-          <select id="ikona" name="ikona" required>
-            <option value="">Izberi ikono</option>
+          <label for="sport">Šport</label>
+          <select id="sport" name="sport" required>
+            <option value="">Izberi šport</option>
             <option value="🏐">🏐 Odbojka</option>
             <option value="⚽">⚽ Nogomet</option>
             <option value="🏀">🏀 Košarka</option>
@@ -66,30 +66,17 @@
             <option value="🥾">🥾 Pohod</option>
           </select>
         </div>
-      </div>
-
-      <div class="two">
-        <div>
-          <label for="lokacija">Lokacija</label>
-          <input
-                  type="text"
-                  id="lokacija"
-                  name="lokacija"
-                  placeholder="Npr. Ljubljana, Tivoli"
-                  required
-          >
-        </div>
 
         <div>
-          <label for="mesto">Kraj</label>
-          <input
-                  type="text"
-                  id="mesto"
-                  name="mesto"
-                  placeholder="Npr. Ljubljana"
-                  required
-          >
+          <label for="prizorisce">Prizorišče</label>
+          <select id="prizorisce" name="prizorisce" required>
+            <option value="">Izberi prizorišče</option>
+            <option value="1">Športni center Jamova</option>
+            <option value="2">Igrišča ob morju</option>
+            <option value="3">Športni park Maribor</option>
+          </select>
         </div>
+
       </div>
 
       <div class="two">
@@ -100,7 +87,7 @@
 
         <div>
           <label for="ura">Ura</label>
-          <input type="time" id="ura" name="ura" required>
+          <input type="time" id="ura" name="ura" step="60" lang="sl" required>
         </div>
       </div>
 
@@ -122,10 +109,10 @@
           <label for="zahtevnost">Zahtevnost</label>
           <select id="zahtevnost" name="zahtevnost" required>
             <option value="">Izberi zahtevnost</option>
-            <option value="zacetnik">Začetnik</option>
-            <option value="rekreativno">Rekreativno</option>
-            <option value="srednje">Srednje</option>
-            <option value="napredno">Napredno</option>
+            <option value="Začetnik">Začetnik</option>
+            <option value="Rekreativno">Rekreativno</option>
+            <option value="Srednje">Srednje</option>
+            <option value="Napredno">Napredno</option>
           </select>
         </div>
       </div>
@@ -135,10 +122,10 @@
           <label for="starost">Starostna skupina</label>
           <select id="starost" name="starost">
             <option value="">Vse starosti</option>
-            <option value="do18">Do 18 let</option>
-            <option value="18-25">18–25 let</option>
-            <option value="26-35">26–35 let</option>
-            <option value="36plus">36+ let</option>
+            <option value="Do 18 let">Do 18 let</option>
+            <option value="18–25 let">18–25 let</option>
+            <option value="26–35 let">26–35 let</option>
+            <option value="36+ let">36+ let</option>
           </select>
         </div>
 
@@ -146,9 +133,9 @@
           <label for="spol">Spol udeležencev</label>
           <select id="spol" name="spol">
             <option value="">Vsi</option>
-            <option value="moski">Moški</option>
-            <option value="zenske">Ženske</option>
-            <option value="mesano">Mešano</option>
+            <option value="Moški">Moški</option>
+            <option value="Ženske">Ženske</option>
+            <option value="Mešano">Mešano</option>
           </select>
         </div>
       </div>
@@ -173,7 +160,7 @@
       </button>
 
       <p id="successMessage" class="success hidden">
-        Aktivnost je bila uspešno objavljena.
+        
       </p>
 
     </form>

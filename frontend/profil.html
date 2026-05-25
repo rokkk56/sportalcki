@@ -23,9 +23,15 @@
   <main class="page">
     <section class="profile-grid">
       <aside class="card profile-card">
-        <div class="avatar">B</div>
-        <h2>Demo uporabnik</h2>
-        <p>Ljubljana · 22 let</p>
+        <div class="avatar" id="profileAvatar">?</div>
+
+        <h2 id="profileName">
+          ime
+        </h2>
+
+        <p id="profileInfo">
+          Maribor, 23 let
+        </p>
         <div class="rating">★★★★★ <span>4.8</span></div>
       </aside>
       <section class="card">
@@ -36,46 +42,23 @@
       </section>
     </section>
 
-    <section class="card notifications">
-      <div class="notification-header">
-        <div>
-          <h2>Vsečkano</h2>
-          <p>Aktivnosti oseb, ki si jih všečkal/a</p>
-        </div>
-        <span>3 nove aktivnosti</span>
-      </div>
-
-      <div class="notification">
-        <div class="notification-icon">🏐</div>
-        <div>
-          <b>Maja je objavila novo aktivnost</b>
-          <p>Odbojka v parku; danes ob 18:00</p>
-        </div>
-      </div>
-
-      <div class="notification">
-        <div class="notification-icon">🏀</div>
-        <div>
-          <b>Luka je objavil novo aktivnost</b>
-          <p>Košarka 3 na 3; jutri ob 16:30</p>
-        </div>
-      </div>
-
-      <div class="notification">
-        <div class="notification-icon">🎾</div>
-        <div>
-          <b>Nina je objavila novo aktivnost</b>
-          <p>Tenis dvojice; v soboto ob 15:00</p>
-        </div>
-      </div>
+    <section class="card">
+      <h2>Všečkani organizatorji</h2>
+      <div id="vseckaniOrganizatorji"></div>
     </section>
 
-    <section class="card comments">
-      <h2>Komentarji in ocene</h2>
-      <p><b>Maja:</b> Zelo dobra komunikacija in točen prihod. ⭐⭐⭐⭐⭐</p>
-      <p><b>Luka:</b> Prijetna ekipa, priporočam za odbojko. ⭐⭐⭐⭐⭐</p>
+    <section class="section moji komentarji">
+      <h2>Moji komentarji</h2>
+      <div id="mojiKomentarji"></div>
     </section>
+
+    <section class="card">
+      <h2>Moje prijavljene aktivnosti</h2>
+      <div id="mojePrijavljeneAktivnosti"></div>
+    </section>
+
   </main>
   <footer>© 2026 ŠportniPartner.si · Projektna ekipa Športalčki</footer>
+  <script src="script.js"></script>
 </body>
 </html>

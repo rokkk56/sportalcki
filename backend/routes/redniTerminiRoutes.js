@@ -14,6 +14,7 @@ router.get("/", async (req, res) => {
                 Termin.Zahtevnost,
                 Termin.StarostnaSkupina,
                 Termin.Spol,
+                Termin.Uporabnikid_Organizator AS organizator_id,
                 Sport.Naziv AS Sport,
                 Prizorisce.Naziv AS Prizorisce,
                 Prizorisce.mesto,
