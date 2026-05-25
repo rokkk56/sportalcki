@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+<<<<<<< HEAD
   <component name="ChangeListManager">
     <list default="true" id="e32764fc-80c9-4529-93fc-4a3a6d2a48e9" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -47,4 +48,7 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+=======
+  <component name="PropertiesComponent">{}</component>
+>>>>>>> 7d980d1d38e658585876abfd16961a4f781382e1
 </project>

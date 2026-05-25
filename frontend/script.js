@@ -7,94 +7,72 @@
 ]; 
 */
 let activities = [];
-
-async function naloziAktivnosti(redniTermini = false) {
+async function naloziAktivnosti(redniTermini) {
   try {
-    const search = document.getElementById("search") ? document.getElementById("search").value : "";
-    const sport = document.getElementById("sport") ? document.getElementById("sport").value : "";
-    const level = document.getElementById("level") ? document.getElementById("level").value : "";
-    const gender = document.getElementById("gender") ? document.getElementById("gender").value : "";
-    const age = document.getElementById("age") ? document.getElementById("age").value : "";
-    const available = document.getElementById("available") ? document.getElementById("available").checked : false;
-
-    const params = new URLSearchParams();
-
-    if (search) params.append("search", search);
-    if (sport) params.append("sport", sport);
-    if (level) params.append("level", level);
-    if (gender) params.append("gender", gender);
-    if (age) params.append("age", age);
-    if (available) params.append("available", "true");
-
-    let odgovor = null;
+    var odgovor = null;
 
     if (redniTermini == true) {
-      odgovor = await fetch("http://localhost:3000/api/redniTermini");
-    } else {
-      odgovor = await fetch("http://localhost:3000/api/aktivnosti?" + params.toString());
+      odgovor = await fetch('http://localhost:3000/api/redniTermini');
     }
+    else {
+      odgovor = await fetch('http://localhost:3000/api/aktivnosti');
+    }
+
 
     if (!odgovor.ok) {
       const napakaPodatki = await odgovor.json();
       console.error("Backend je vrnil napako:", napakaPodatki);
       throw new Error(napakaPodatki.napaka || "Neznana napaka na strežniku.");
     }
-
     const podatkiIzBaze = await odgovor.json();
 
-    activities = podatkiIzBaze.map(function (a) {
-      let izpisanDatum = "Neznano";
-      let izpisanaUra = "Neznano";
+    activities = podatkiIzBaze.map(a => {
+      let izpisanDatum = 'Neznano';
+      let izpisanaUra = 'Neznano';
 
       if (a.datum) {
         const d = new Date(a.datum);
-        izpisanDatum = d.toLocaleDateString("sl-SI");
-        izpisanaUra = d.toLocaleTimeString("sl-SI", {
-          hour: "2-digit",
-          minute: "2-digit"
-        });
+        izpisanDatum = d.toLocaleDateString('sl-SI');
+        izpisanaUra = d.toLocaleTimeString('sl-SI', { hour: '2-digit', minute: '2-digit' });
       }
 
       return {
         id: a.id_termin,
-        title: a.naziv || "Brez naziva",
-        sport: a.sport || "Aktivnost",
-        venue: a.prizorisce || "Neznano prizorišče",
-        city: a.mesto || "Neznano",
+        title: a.naziv || 'Brez naziva',
+        sport: a.sport || 'Aktivnost',
+        venue: a.prizorisce || 'Neznano prizorišče',
+        city: a.mesto || 'Neznano',
         date: izpisanDatum,
         time: izpisanaUra,
         spots: a.stevilomest !== undefined ? a.stevilomest : 0,
-        description: a.opis || "Brez opisa",
-        level: a.zahtevnost || "Srednja",
-        gender: a.spol || "Mešano",
-        age: a.starostnaskupina || "Vsi",
-        komentarTekst: a.komentartekst || "",
-        komentatorIme: a.komentatorime || "",
-        komentatorPriimek: a.komentatorpriimek || "",
+        description: a.opis || 'Brez opisa',
+        level: a.zahtevnost || 'Srednja',
+        gender: a.spol || 'Mešano',
+        age: a.starostnaskupina || 'Vsi',
+        komentarTekst: a.komentartekst || '',
+        komentatorIme: a.komentatorime || '',
+        komentatorPriimek: a.komentatorpriimek || '',
 
-        emoji: a.sport === "Nogomet" ? "⚽" :
-          a.sport === "Tenis" ? "🎾" :
-          a.sport === "Košarka" ? "🏀" :
-          a.sport === "Odbojka" ? "🏐" :
-          a.sport === "Badminton" ? "🏸" : "🏃",
-
-        org: (a.organizatorime || "") + " " + (a.organizatorpriimek || "")
+        emoji: a.sport === 'Nogomet' ? '⚽' :
+          a.sport === 'Tenis' ? '🎾' :
+            a.sport === 'Košarka' ? '🏀' :
+              a.sport === 'Odbojka' ? '🏐' :
+                a.sport === 'Badminton' ? '🏸' : '🏃',
+        org: a.organizatorime + ' ' + a.organizatorpriimek || 'Neznan organizator'
       };
     });
 
+    console.log(activities);
     renderActivities();
 
   } catch (napaka) {
     console.error("Ujeta napaka v aplikaciji:", napaka.message);
-
-    const list = document.getElementById("activityList");
-
+    const list = document.getElementById('activityList');
     if (list) {
       list.innerHTML = `<p class="empty">Napaka pri nalaganju: ${napaka.message}</p>`;
     }
   }
 }
-
 
 function renderActivities() {
   const list = document.getElementById('activityList');
@@ -115,8 +93,20 @@ function renderActivities() {
     (!age || a.age === age) &&
     (!available || a.spots > 0)
   );
+  list.innerHTML = filtered.map((a, index) => {
+  let komentarHTML = '';
+    if (a.komentarTekst) {
+      komentarHTML = `
+        <div class="feedback-box">
+          <h6>Povratne informacije:</h6>
+          <p class="comment-text">
+            <strong>${a.komentatorIme} ${a.komentatorPriimek}:</strong> "${a.komentarTekst}"
+          </p>
+        </div>
+      `;
+    }
 
-  list.innerHTML = filtered.map((a, index) => `
+    return `
     <article class="activity-card">
       <div class="emoji">${a.emoji}</div>
       <div class="activity-info">
@@ -129,6 +119,7 @@ function renderActivities() {
           <span>${a.age}</span>
           <span>${a.spots} prostih mest</span>
         </div>
+        ${komentarHTML}
       </div>
       <div class="activity-buttons">
         <button onclick="toggleJoin(this)" class="btn ${a.spots > 0 ? 'primary' : 'disabled'} small" ${a.spots === 0 ? 'disabled' : ''}>
@@ -136,7 +127,7 @@ function renderActivities() {
         </button>
       </div>
        <button onclick="toggleHeart(this)" class="heart-btn">♡</button>
-    </article>`).join('') || '<p class="empty">Ni najdenih aktivnosti za izbrane filtre.</p>';
+    </article>`;}).join('') || '<p class="empty">Ni najdenih aktivnosti za izbrane filtre.</p>';
 }
 
 function toggleJoin(button) {
@@ -167,13 +158,180 @@ function showSuccess(event) {
   document.getElementById('success').classList.remove('hidden');
 }
 
-document.querySelectorAll("#search, #sport, #level, #gender, #age, #available").forEach(function (el) {
-  el.addEventListener("input", function () {
-    naloziAktivnosti(false);
-  });
-
-  el.addEventListener("change", function () {
-    naloziAktivnosti(false);
-  });
+document.querySelectorAll('#search, #sport, #level, #gender, #age, #available').forEach(el => {
+  el.addEventListener('input', renderActivities);
+  el.addEventListener('change', renderActivities);
 });
 
+const API_URL = "http://localhost:3000/api";
+
+const loginForm = document.getElementById("loginForm");
+
+if (loginForm) {
+  loginForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const message = document.getElementById("loginMessage");
+
+    try {
+      const odgovor = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
+      });
+
+      const podatki = await odgovor.json();
+      console.log(podatki);
+
+      if (!odgovor.ok) {
+        message.textContent = podatki.napaka;
+        message.classList.remove("hidden");
+        return;
+      }
+
+      localStorage.setItem("token", podatki.token);
+      localStorage.setItem("uporabnik", JSON.stringify(podatki.uporabnik));
+
+      if (podatki.uporabnik.tip === "Administrator") {
+        window.location.href = "admin.html";
+      } else {
+        window.location.href = "profil.html";
+      }
+
+    } catch (err) {
+      message.textContent = "Napaka pri povezavi s strežnikom.";
+      message.classList.remove("hidden");
+    }
+  });
+}
+
+function odjava() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("uporabnik");
+  window.location.href = "prijava.html";
+}
+
+async function naloziAdminAktivnosti() {
+  const adminList = document.getElementById("adminActivityList");
+
+  if (!adminList) return;
+
+  const token = localStorage.getItem("token");
+  const uporabnik = JSON.parse(localStorage.getItem("uporabnik"));
+
+  if (!token || !uporabnik || uporabnik.tip !== "Administrator") {
+    window.location.href = "prijava.html";
+    return;
+  }
+
+  try {
+    const odgovor = await fetch(`${API_URL}/aktivnosti`);
+    const aktivnosti = await odgovor.json();
+
+    adminList.innerHTML = "";
+
+    aktivnosti.forEach(a => {
+      adminList.innerHTML += `
+                <article class="activity-card">
+                    <div class="emoji">
+                        ${vrniIkonoSporta(a.sport)}
+                    </div>
+
+                    <div class="activity-info">
+                        <h2>${a.naziv}</h2>
+                        <p>
+                            ${a.sport} · ${a.prizorisce}, ${a.mesto}
+                        </p>
+                        <p>
+                            ${new Date(a.datum).toLocaleDateString("sl-SI")}
+                        </p>
+
+                        <div class="tags">
+                            <span>${a.zahtevnost}</span>
+                            <span>${a.stevilomest} prostih mest</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button class="btn secondary small" onclick="urediAktivnost(${a.id_termin}, '${a.naziv}', ${a.stevilomest}, '${a.opis}', '${a.zahtevnost}')">
+                            Uredi
+                        </button>
+
+                        <button class="btn danger small" onclick="izbrisiAktivnost(${a.id_termin})">
+                            Izbriši
+                        </button>
+                    </div>
+                </article>
+            `;
+    });
+
+  } catch (err) {
+    adminList.innerHTML = `
+            <p class="empty">Napaka pri nalaganju aktivnosti.</p>
+        `;
+  }
+}
+
+function vrniIkonoSporta(sport) {
+  if (sport === "Nogomet") return "⚽";
+  if (sport === "Košarka") return "🏀";
+  if (sport === "Odbojka") return "🏐";
+  if (sport === "Tenis") return "🎾";
+  if (sport === "Badminton") return "🏸";
+  return "🏃";
+}
+
+async function izbrisiAktivnost(id) {
+  const token = localStorage.getItem("token");
+
+  if (!confirm("Ali res želiš izbrisati to aktivnost?")) {
+    return;
+  }
+
+  await fetch(`${API_URL}/aktivnosti/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  naloziAdminAktivnosti();
+}
+
+async function urediAktivnost(id, starNaziv, staraMesta, starOpis, staraZahtevnost) {
+  const token = localStorage.getItem("token");
+
+  const naziv = prompt("Vnesi nov naziv:", starNaziv);
+  const steviloMest = prompt("Vnesi število prostih mest:", staraMesta);
+  const opis = prompt("Vnesi opis:", starOpis);
+  const zahtevnost = prompt("Vnesi zahtevnost:", staraZahtevnost);
+
+  if (!naziv || !steviloMest || !opis || !zahtevnost) {
+    return;
+  }
+
+  await fetch(`${API_URL}/aktivnosti/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      naziv: naziv,
+      steviloMest: steviloMest,
+      opis: opis,
+      zahtevnost: zahtevnost
+    })
+  });
+
+  naloziAdminAktivnosti();
+}
+
+naloziAdminAktivnosti();

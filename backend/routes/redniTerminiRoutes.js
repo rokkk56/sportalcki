@@ -18,14 +18,21 @@ router.get("/", async (req, res) => {
                 Prizorisce.Naziv AS Prizorisce,
                 Prizorisce.mesto,
                 Uporabnik.Ime AS OrganizatorIme,
-                Uporabnik.Priimek AS OrganizatorPriimek
+                Uporabnik.Priimek AS OrganizatorPriimek,
+                Komentar.Komentar AS KomentarTekst,
+                Komentator.Ime AS KomentatorIme,
+                Komentator.priimek AS KomentatorPriimek
             FROM Termin
             JOIN Sport
-            On Sportid_Sport = id_Sport
+            ON Termin.Sportid_Sport = Sport.id_Sport
             JOIN Prizorisce
-            ON Prizorisceid_Prizorisce = id_Prizorisce
+            ON Termin.Prizorisceid_Prizorisce = Prizorisce.id_Prizorisce
             JOIN Uporabnik
-            ON Termin.Uporabnikid_Organizator = id_Uporabnik
+            ON Termin.Uporabnikid_Organizator = Uporabnik.id_Uporabnik
+            LEFT JOIN Komentar 
+            ON Termin.id_Termin = Komentar.Terminid_Termin
+            LEFT JOIN Uporabnik AS Komentator
+            ON Komentar.Uporabnikid_Uporabnik = Komentator.id_Uporabnik
             WHERE Termin.RedniTermin = TRUE;
             `);
 

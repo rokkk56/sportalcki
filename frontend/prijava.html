@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prijava | Športalčki</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="navbar">
+    <div class="logo">
+        <span>Š</span> Športalčki
+    </div>
+    <nav>
+        <a href="index.html">Domov</a>
+        <a href="aktivnosti.html">Aktivnosti</a>
+        <a href="objavi.html">Objavi oglas</a>
+        <a href="termini.html">Redni termini</a>
+        <a href="profil.html">Moj profil</a>
+        <a href="prijava.html"class="active">Prijava</a>
+        <a href="admin.html">Administrator</a>
+    </nav>
+</header>
+
+<main class="page narrow">
+
+    <section class="page-title">
+        <span class="badge">Prijava</span>
+        <h1>Prijavi se</h1>
+        <p>
+            Prijavi se kot uporabnik ali administrator.
+        </p>
+    </section>
+
+    <section class="card">
+        <form class="form" id="loginForm">
+
+            <div>
+                <label for="username">Uporabniško ime</label>
+                <input type="text" id="username" placeholder="Vnesi uporabniško ime" required>
+            </div>
+
+            <div>
+                <label for="password">Geslo</label>
+                <input type="password" id="password" placeholder="Vnesi geslo" required>
+            </div>
+
+            <button type="submit" class="btn primary">Prijava</button>
+
+            <p id="loginMessage" class="success hidden"></p>
+
+        </form>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Športalčki | ŠportniPartner.si</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
