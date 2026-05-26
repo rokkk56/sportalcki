@@ -854,3 +854,48 @@ async function odjaviSeIzProfila(terminId) {
 
 naloziMojePrijavljeneAktivnosti();
 
+//popravljen navbar
+function urediNavbar() {
+  const loginLink = document.getElementById("loginLink");
+  const profileLink = document.getElementById("profileLink");
+  const adminLink = document.getElementById("adminLink");
+  const logoutLink = document.getElementById("logoutLink");
+
+  const token = localStorage.getItem("token");
+  const uporabnik = JSON.parse(localStorage.getItem("uporabnik"));
+
+  if (!loginLink || !profileLink || !adminLink || !logoutLink) return;
+
+  if (token && uporabnik) {
+    loginLink.classList.add("hidden");
+    profileLink.classList.remove("hidden");
+    logoutLink.classList.remove("hidden");
+
+    if (uporabnik.tip.toLowerCase().trim() === "administrator") {
+      adminLink.classList.remove("hidden");
+    } else {
+      adminLink.classList.add("hidden");
+    }
+  } else {
+    loginLink.classList.remove("hidden");
+    profileLink.classList.add("hidden");
+    adminLink.classList.add("hidden");
+    logoutLink.classList.add("hidden");
+  }
+}
+
+urediNavbar();
+
+function odjava() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("uporabnik");
+  window.location.href = "prijava.html";
+}
+
+const tip = podatki.uporabnik.tip.toLowerCase().trim();
+
+if (tip === "administrator") {
+  window.location.href = "admin.html";
+} else {
+  window.location.href = "profil.html";
+}

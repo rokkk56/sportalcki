@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourcePerFileMappings">
+    <file url="file://$PROJECT_DIR$/backend/SportniPartner-admin.sql" value="4e4c223a-2556-4f7d-948c-d3d8f902934e" />
+    <file url="file://$PROJECT_DIR$/backend/SportniPartner.sql" value="e43bbea7-b01a-452e-b47a-56d607a60511" />
+  </component>
+</project>
