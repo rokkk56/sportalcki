@@ -195,13 +195,6 @@ if (loginForm) {
       localStorage.setItem("token", podatki.token);
       localStorage.setItem("uporabnik", JSON.stringify(podatki.uporabnik));
 
-      const tip = podatki.uporabnik.tip.toLowerCase().trim();
-
-      if (tip === "Administrator") {
-        window.location.href = "admin.html";
-      } else {
-        window.location.href = "profil.html";
-      }
 
     } catch (err) {
       console.error(err);
@@ -892,10 +885,442 @@ function odjava() {
   window.location.href = "prijava.html";
 }
 
-const tip = podatki.uporabnik.tip.toLowerCase().trim();
 
-if (tip === "administrator") {
-  window.location.href = "admin.html";
-} else {
-  window.location.href = "profil.html";
+//popravljeno urejanje oglasov in prikazovanje komentarjev za admina
+async function naloziAdminStran() {
+  const oglasiBox = document.getElementById("adminOglasi");
+  const komentarjiBox = document.getElementById("adminKomentarji");
+
+  if (!oglasiBox || !komentarjiBox) return;
+
+  const token = localStorage.getItem("token");
+  const uporabnik = JSON.parse(localStorage.getItem("uporabnik"));
+
+  if (!token || !uporabnik || uporabnik.tip !== "Administrator") {
+    window.location.href = "prijava.html";
+    return;
+  }
+
+  await naloziAdminOglase();
+  await naloziAdminKomentarje();
+}
+
+function prikaziAdminSporocilo(besedilo) {
+  const msg = document.getElementById("adminMessage");
+
+  if (!msg) return;
+
+  msg.textContent = besedilo;
+  msg.classList.remove("hidden");
+
+  setTimeout(() => {
+    msg.classList.add("hidden");
+  }, 3000);
+}
+
+async function naloziAdminOglase() {
+  const oglasiBox = document.getElementById("adminOglasi");
+  const token = localStorage.getItem("token");
+
+  const odgovor = await fetch("http://localhost:3000/api/admin/oglasi", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  const oglasi = await odgovor.json();
+
+  if (!odgovor.ok) {
+    oglasiBox.innerHTML = `<p class="empty">${oglasi.napaka}</p>`;
+    return;
+  }
+
+  oglasiBox.innerHTML = oglasi.map(o => `
+    <article class="activity-card" id="oglas-${o.id_termin}">
+      <div class="emoji">${vrniIkonoSporta(o.sport)}</div>
+
+      <div class="activity-info">
+        <input id="naziv-${o.id_termin}" value="${o.naziv}">
+        <textarea id="opis-${o.id_termin}">${o.opis || ""}</textarea>
+
+        <p>${o.sport} · ${o.prizorisce}, ${o.mesto}</p>
+        <p>${new Date(o.datum).toLocaleDateString("sl-SI")}</p>
+
+        <div class="two">
+          <input id="mesta-${o.id_termin}" type="number" value="${o.stevilomest}">
+          <input id="zahtevnost-${o.id_termin}" value="${o.zahtevnost}">
+        </div>
+
+        <div class="tags">
+          <span>${o.organizatorime} ${o.organizatorpriimek}</span>
+        </div>
+      </div>
+
+      <div>
+        <button class="btn primary small" onclick="shraniAdminOglas(${o.id_termin})">
+          Shrani
+        </button>
+
+        <button class="btn danger small" onclick="izbrisiAdminOglas(${o.id_termin})">
+          Izbriši
+        </button>
+      </div>
+    </article>
+  `).join("");
+}
+
+async function shraniAdminOglas(id) {
+  const token = localStorage.getItem("token");
+
+  const naziv = document.getElementById(`naziv-${id}`).value;
+  const opis = document.getElementById(`opis-${id}`).value;
+  const steviloMest = document.getElementById(`mesta-${id}`).value;
+  const zahtevnost = document.getElementById(`zahtevnost-${id}`).value;
+
+  const odgovor = await fetch(`http://localhost:3000/api/admin/oglasi/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      naziv,
+      opis,
+      steviloMest,
+      zahtevnost
+    })
+  });
+
+  const podatki = await odgovor.json();
+
+  if (!odgovor.ok) {
+    prikaziAdminSporocilo(podatki.napaka || "Napaka pri urejanju oglasa.");
+    return;
+  }
+
+  prikaziAdminSporocilo("Oglas je bil uspešno posodobljen.");
+  naloziAdminOglase();
+}
+
+async function izbrisiAdminOglas(id) {
+  const token = localStorage.getItem("token");
+
+  const oglas = document.getElementById(`oglas-${id}`);
+
+  oglas.innerHTML = `
+    <div class="activity-info">
+      <h2>Ali res želiš izbrisati ta oglas?</h2>
+      <p>To dejanje bo odstranilo oglas iz baze.</p>
+    </div>
+
+    <div>
+      <button class="btn danger small" onclick="potrdiBrisanjeOglasa(${id})">
+        Da, izbriši
+      </button>
+
+      <button class="btn secondary small" onclick="naloziAdminOglase()">
+        Prekliči
+      </button>
+    </div>
+  `;
+}
+
+async function potrdiBrisanjeOglasa(id) {
+  const token = localStorage.getItem("token");
+
+  const odgovor = await fetch(`http://localhost:3000/api/admin/oglasi/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  const podatki = await odgovor.json();
+
+  if (!odgovor.ok) {
+    prikaziAdminSporocilo(podatki.napaka || "Napaka pri brisanju oglasa.");
+    return;
+  }
+
+  prikaziAdminSporocilo("Oglas je bil izbrisan.");
+  naloziAdminOglase();
+}
+
+async function naloziAdminKomentarje() {
+  const komentarjiBox = document.getElementById("adminKomentarji");
+  const token = localStorage.getItem("token");
+
+  const odgovor = await fetch("http://localhost:3000/api/admin/komentarji", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  const komentarji = await odgovor.json();
+
+  if (!odgovor.ok) {
+    komentarjiBox.innerHTML = `<p class="empty">${komentarji.napaka}</p>`;
+    return;
+  }
+
+  if (komentarji.length === 0) {
+    komentarjiBox.innerHTML = `<p class="empty">Trenutno ni komentarjev.</p>`;
+    return;
+  }
+
+  komentarjiBox.innerHTML = komentarji.map(k => `
+    <article class="activity-card" id="komentar-${k.id_komentar}">
+      <div class="emoji">💬</div>
+
+      <div class="activity-info">
+        <h2>${k.username}</h2>
+        <p>${k.komentar}</p>
+<p>Aktivnost: ${k.termin || "Splošen komentar"}</p>
+      </div>
+
+      <div>
+        <button class="btn danger small" onclick="izbrisiAdminKomentar(${k.id_komentar})">
+          Izbriši
+        </button>
+      </div>
+    </article>
+  `).join("");
+}
+
+function izbrisiAdminKomentar(id) {
+  const komentar = document.getElementById(`komentar-${id}`);
+
+  komentar.innerHTML = `
+    <div class="activity-info">
+      <h2>Ali res želiš izbrisati komentar?</h2>
+      <p>Komentar bo odstranjen iz baze.</p>
+    </div>
+
+    <div>
+      <button class="btn danger small" onclick="potrdiBrisanjeKomentarja(${id})">
+        Da, izbriši
+      </button>
+
+      <button class="btn secondary small" onclick="naloziAdminKomentarje()">
+        Prekliči
+      </button>
+    </div>
+  `;
+}
+
+async function potrdiBrisanjeKomentarja(id) {
+  const token = localStorage.getItem("token");
+
+  const odgovor = await fetch(`http://localhost:3000/api/admin/komentarji/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  const podatki = await odgovor.json();
+
+  if (!odgovor.ok) {
+    prikaziAdminSporocilo(podatki.napaka || "Napaka pri brisanju komentarja.");
+    return;
+  }
+
+  prikaziAdminSporocilo("Komentar je bil izbrisan.");
+  naloziAdminKomentarje();
+}
+
+if (document.getElementById("adminOglasi")) {
+  naloziAdminStran();
+}
+
+//prikaz mojih aktivnosti
+async function naloziMojeAktivnosti() {
+  const box = document.getElementById("mojeAktivnosti");
+  if (!box) return;
+
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    window.location.href = "prijava.html";
+    return;
+  }
+
+  const odgovor = await fetch("http://localhost:3000/api/organizatorji/moje-aktivnosti", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  const aktivnosti = await odgovor.json();
+  console.log("MOJE AKTIVNOSTI:", aktivnosti);
+  console.log("STATUS:", odgovor.status);
+
+  if (!odgovor.ok) {
+    box.innerHTML = `<p class="empty">${aktivnosti.napaka}</p>`;
+    return;
+  }
+
+  if (aktivnosti.length === 0) {
+    box.innerHTML = `<p class="empty">Nisi še objavil nobene aktivnosti.</p>`;
+    return;
+  }
+
+  box.innerHTML = aktivnosti.map(a => `
+    <article class="activity-card" id="moja-aktivnost-${a.id_termin}">
+      <div class="emoji">${vrniIkonoSporta(a.sport)}</div>
+
+      <div class="activity-info">
+        <input id="moja-naziv-${a.id_termin}" value="${a.naziv}">
+        <textarea id="moja-opis-${a.id_termin}">${a.opis || ""}</textarea>
+
+        <p>${a.sport} · ${a.prizorisce}, ${a.mesto}</p>
+        <p>${new Date(a.datum).toLocaleDateString("sl-SI")}</p>
+
+        <div class="two">
+          <input id="moja-mesta-${a.id_termin}" type="number" value="${a.stevilomest}">
+          <input id="moja-zahtevnost-${a.id_termin}" value="${a.zahtevnost}">
+        </div>
+
+        <div id="prijave-${a.id_termin}" class="comments"></div>
+      </div>
+
+      <div>
+        <button class="btn primary small" onclick="shraniMojoAktivnost(${a.id_termin})">
+          Shrani
+        </button>
+
+        <button class="btn secondary small" onclick="naloziPrijaveNaAktivnost(${a.id_termin})">
+          Prijave
+        </button>
+
+        <button class="btn danger small" onclick="izbrisiMojoAktivnost(${a.id_termin})">
+          Izbriši
+        </button>
+      </div>
+    </article>
+  `).join("");
+}
+
+function prikaziProfilSporocilo(besedilo) {
+  const msg = document.getElementById("profilMessage");
+  if (!msg) return;
+
+  msg.textContent = besedilo;
+  msg.classList.remove("hidden");
+
+  setTimeout(() => {
+    msg.classList.add("hidden");
+  }, 3000);
+}
+
+async function shraniMojoAktivnost(id) {
+  const token = localStorage.getItem("token");
+
+  const naziv = document.getElementById(`moja-naziv-${id}`).value;
+  const opis = document.getElementById(`moja-opis-${id}`).value;
+  const steviloMest = document.getElementById(`moja-mesta-${id}`).value;
+  const zahtevnost = document.getElementById(`moja-zahtevnost-${id}`).value;
+
+  const odgovor = await fetch(`http://localhost:3000/api/organizatorji/moje-aktivnosti/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      naziv,
+      opis,
+      steviloMest,
+      zahtevnost
+    })
+  });
+
+  const podatki = await odgovor.json();
+
+  if (!odgovor.ok) {
+    prikaziProfilSporocilo(podatki.napaka || "Napaka pri urejanju aktivnosti.");
+    return;
+  }
+
+  prikaziProfilSporocilo("Aktivnost je bila posodobljena.");
+  naloziMojeAktivnosti();
+}
+
+function izbrisiMojoAktivnost(id) {
+  const kartica = document.getElementById(`moja-aktivnost-${id}`);
+
+  kartica.innerHTML = `
+    <div class="activity-info">
+      <h2>Ali res želiš izbrisati svojo aktivnost?</h2>
+      <p>Aktivnost bo odstranjena iz baze.</p>
+    </div>
+
+    <div>
+      <button class="btn danger small" onclick="potrdiBrisanjeMojeAktivnosti(${id})">
+        Da, izbriši
+      </button>
+
+      <button class="btn secondary small" onclick="naloziMojeAktivnosti()">
+        Prekliči
+      </button>
+    </div>
+  `;
+}
+
+async function potrdiBrisanjeMojeAktivnosti(id) {
+  const token = localStorage.getItem("token");
+
+  const odgovor = await fetch(`http://localhost:3000/api/organizatorji/moje-aktivnosti/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  const podatki = await odgovor.json();
+
+  if (!odgovor.ok) {
+    prikaziProfilSporocilo(podatki.napaka || "Napaka pri brisanju aktivnosti.");
+    return;
+  }
+
+  prikaziProfilSporocilo("Aktivnost je bila izbrisana.");
+  naloziMojeAktivnosti();
+}
+
+async function naloziPrijaveNaAktivnost(id) {
+  const token = localStorage.getItem("token");
+  const prijaveBox = document.getElementById(`prijave-${id}`);
+
+  const odgovor = await fetch(`http://localhost:3000/api/organizatorji/moje-aktivnosti/${id}/prijave`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  const prijave = await odgovor.json();
+
+  if (!odgovor.ok) {
+    prijaveBox.innerHTML = `<p>${prijave.napaka}</p>`;
+    return;
+  }
+
+  if (prijave.length === 0) {
+    prijaveBox.innerHTML = `<p>Na to aktivnost še ni prijavljenih uporabnikov.</p>`;
+    return;
+  }
+
+  prijaveBox.innerHTML = `
+    <h3>Prijavljeni uporabniki</h3>
+    ${prijave.map(p => `
+      <p>
+        👤 ${p.ime} ${p.priimek} 
+        <strong>(${p.username})</strong> · ${p.email}
+      </p>
+    `).join("")}
+  `;
+}
+
+if (document.getElementById("mojeAktivnosti")) {
+  naloziMojeAktivnosti();
 }

@@ -4,28 +4,90 @@ const router = express.Router();
 const pool = require("../db");
 const {preveriToken} = require("../middleware/authMiddleware")
 
-router.get("/", async (req, res) => {
-    try{
+router.get("/moje-aktivnosti", preveriToken, async (req, res) => {
+    try {
         const result = await pool.query(`
-            SELECT id_Uporabnik, Ime, Priimek, Username, Email 
-            FROM Uporabnik
-            JOIN TipUporabnika
-            ON TipUporabnikaid_TipUporabnika=id_TipUporabnika
-            LEFT JOIN Ocena
-            ON id_Uporabnik = Uporabnikid_Organizator
-            WHERE naziv = 'Organizator'
-            GROUP BY id_Uporabnik, Ime, Priimek, Username, Email
+      SELECT 
+        t.id_termin,
+        t.naziv,
+        t.datum,
+        t.stevilomest,
+        t.opis,
+        t.zahtevnost,
+        s.naziv AS sport,
+        p.naziv AS prizorisce,
+        p.mesto
+      FROM termin t
+      JOIN sport s ON t.sportid_sport = s.id_sport
+      JOIN prizorisce p ON t.prizorisceid_prizorisce = p.id_prizorisce
+      WHERE t.uporabnikid_organizator = $1
+      ORDER BY t.datum DESC
+    `, [req.uporabnik.id]);
 
-            `);
-
-            res.json(result.rows);
+        res.json(result.rows);
     } catch (err) {
-        res.status(500).json({
-            napaka: err.message
-        });
+        console.error(err);
+        res.status(500).json({ napaka: "Napaka pri nalaganju mojih aktivnosti." });
     }
 });
 
+router.get("/moje-aktivnosti/:id/prijave", preveriToken, async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT
+                u.id_Uporabnik AS id_uporabnik,
+                u.Ime AS ime,
+                u.Priimek AS priimek,
+                u.Username AS username,
+                u.Email AS email
+            FROM Uporabnik_Termin pr
+                     JOIN Uporabnik u
+                          ON pr.Uporabnikid_Uporabnik = u.id_Uporabnik
+            WHERE pr.Terminid_Termin = $1
+    `, [req.params.id]);
+
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ napaka: "Napaka pri nalaganju prijav." });
+    }
+});
+
+router.put("/moje-aktivnosti/:id", preveriToken, async (req, res) => {
+    const { naziv, opis, steviloMest, zahtevnost } = req.body;
+
+    try {
+        await pool.query(`
+      UPDATE termin
+      SET naziv = $1,
+          opis = $2,
+          stevilomest = $3,
+          zahtevnost = $4
+      WHERE id_termin = $5
+      AND uporabnikid_organizator = $6
+    `, [naziv, opis, steviloMest, zahtevnost, req.params.id, req.uporabnik.id]);
+
+        res.json({ sporocilo: "Aktivnost je bila posodobljena." });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ napaka: "Napaka pri urejanju aktivnosti." });
+    }
+});
+
+router.delete("/moje-aktivnosti/:id", preveriToken, async (req, res) => {
+    try {
+        await pool.query(`
+      DELETE FROM termin
+      WHERE id_termin = $1
+      AND uporabnikid_organizator = $2
+    `, [req.params.id, req.uporabnik.id]);
+
+        res.json({ sporocilo: "Aktivnost je bila izbrisana." });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ napaka: "Napaka pri brisanju aktivnosti." });
+    }
+});
 router.get("/vseckani", preveriToken, async(req,res) => {
     try{
         const uporabnikId = req.uporabnik.id;
