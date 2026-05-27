@@ -13,8 +13,6 @@
       <a href="index.html">Domov</a>
       <a href="aktivnosti.html">Aktivnosti</a>
       <a href="objavi.html">Objavi oglas</a>
-      <a href="termini.html">Redni termini</a>
-
       <a href="prijava.html" id="loginLink">Prijava</a>
       <a href="profil.html" id="profileLink" class="hidden">Profil</a>
       <a href="admin.html" id="adminLink" class="hidden">Administrator</a>
@@ -25,8 +23,18 @@
   <main class="page">
     <section class="page-title">
       <p class="badge">Iskanje aktivnosti</p>
-      <h1>Poišči športno aktivnost</h1>
+      
+
+      <div class="title-row">
+        <h1>Poišči športno aktivnost</h1>
+
+        <button id="redniTerminiBtn" class="btn redni-btn big" onclick="prikaziRedneTermine()">
+          Redni termini
+        </button>
+      </div>
+      
       <p>Filtriraj po športu, kraju, datumu, zahtevnosti, spolu, starosti in prostih mestih.</p>
+
     </section>
 
     <section class="filters card">

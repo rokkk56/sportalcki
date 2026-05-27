@@ -1466,3 +1466,20 @@ if (profileImageInput) {
     reader.readAsDataURL(file);
   });
 }
+
+//prikaz rednih terminov(Aktivnosti)
+let prikazRednihTerminov = false;
+
+function prikaziRedneTermine() {
+  prikazRednihTerminov = !prikazRednihTerminov;
+
+  const gumb = document.getElementById("redniTerminiBtn");
+
+  if (prikazRednihTerminov) {
+    if (gumb) gumb.textContent = "Prikaži aktivnosti";
+    naloziAktivnosti(true);
+  } else {
+    if (gumb) gumb.textContent = "Redni termini";
+    naloziAktivnosti(false);
+  }
+}
