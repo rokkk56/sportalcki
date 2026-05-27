@@ -60,45 +60,6 @@ router.post("/:terminId", preveriToken, async function (req, res) {
   }
 });
 
-// odjava s termina
-router.delete("/:terminId", preveriToken, async function (req, res) {
-  try {
-    const uporabnikId = req.uporabnik.id;
-    const terminId = req.params.terminId;
-
-    const prijava = await pool.query(
-      `DELETE FROM Uporabnik_Termin
-       WHERE Uporabnikid_Uporabnik = $1
-       AND Terminid_Termin = $2
-       RETURNING *`,
-      [uporabnikId, terminId]
-    );
-
-    if (prijava.rows.length === 0) {
-      return res.status(404).json({
-        napaka: "Na to aktivnost nisi prijavljen/a."
-      });
-    }
-
-    await pool.query(
-      `UPDATE Termin
-       SET stevilomest = stevilomest + 1
-       WHERE id_Termin = $1`,
-      [terminId]
-    );
-
-    res.json({
-      sporocilo: "Uspešno si se odjavil/a z aktivnosti."
-    });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      napaka: "Napaka pri odjavi z aktivnosti."
-    });
-  }
-});
-
 // aktivnosti, na katere je uporabnik prijavljen
 router.get("/moje/aktivnosti", preveriToken, async function (req, res) {
   try {
@@ -144,5 +105,46 @@ router.get("/moje/aktivnosti", preveriToken, async function (req, res) {
     });
   }
 });
+
+// odjava s termina
+router.delete("/:terminId", preveriToken, async function (req, res) {
+  try {
+    const uporabnikId = req.uporabnik.id;
+    const terminId = req.params.terminId;
+
+    const prijava = await pool.query(
+      `DELETE FROM Uporabnik_Termin
+       WHERE Uporabnikid_Uporabnik = $1
+       AND Terminid_Termin = $2
+       RETURNING *`,
+      [uporabnikId, terminId]
+    );
+
+    if (prijava.rows.length === 0) {
+      return res.status(404).json({
+        napaka: "Na to aktivnost nisi prijavljen/a."
+      });
+    }
+
+    await pool.query(
+      `UPDATE Termin
+       SET stevilomest = stevilomest + 1
+       WHERE id_Termin = $1`,
+      [terminId]
+    );
+
+    res.json({
+      sporocilo: "Uspešno si se odjavil/a z aktivnosti."
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      napaka: "Napaka pri odjavi z aktivnosti."
+    });
+  }
+});
+
+
 
 module.exports = router;
