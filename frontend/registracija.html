@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registracija | ŠportniPartner.si</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="navbar">
+  <a class="logo" href="index.html"><span>Š</span> ŠportniPartner.si</a>
+  <nav>
+    <a href="index.html">Domov</a>
+    <a href="aktivnosti.html">Aktivnosti</a>
+    <a href="objavi.html">Objavi oglas</a>
+    <a href="termini.html">Redni termini</a>
+    <a href="prijava.html" id="loginLink">Prijava</a>
+    <a href="profil.html" id="profileLink" class="hidden">Profil</a>
+    <a href="admin.html" id="adminLink" class="hidden">Administrator</a>
+    <a href="#" id="logoutLink" class="hidden" onclick="odjava()">Odjava</a>
+  </nav>
+</header>
+
+<main class="page">
+  <section class="card">
+    <h1>Registracija</h1>
+
+    <form id="registerForm">
+      <input id="regIme" type="text" placeholder="Ime" required>
+      <input id="regPriimek" type="text" placeholder="Priimek" required>
+      <input id="regUsername" type="text" placeholder="Uporabniško ime" required>
+      <input id="regEmail" type="email" placeholder="Email" required>
+      <input id="regPassword" type="password" placeholder="Geslo" required>
+
+      <input id="regDatumRojstva" type="date">
+      
+      <select id="regSpol">
+        <option value="">Izberi spol</option>
+        <option value="Moški">Moški</option>
+        <option value="Ženska">Ženska</option>
+      </select>
+
+      <button class="btn primary" type="submit">Registriraj se</button>
+
+      <p id="registerMessage" class="form-message"></p>
+    </form>
+
+    <p>Že imaš račun? <a href="prijava.html">Prijavi se</a></p>
+  </section>
+</main>
+
+<footer>© 2026 ŠportniPartner.si · Projektna ekipa Športalčki</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

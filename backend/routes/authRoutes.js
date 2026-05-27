@@ -77,4 +77,46 @@ router.post("/login", async (req, res) => {
     }
 });
 
+router.post("/register", async(req,res) => {
+    try{
+        const {
+            ime,
+            priimek,
+            username,
+            email,
+            password,
+            datumRojstva,
+            spol
+        } = req.body;
+
+        if(!ime || !priimek || !username || !email || !password) {
+            return res.status(400).json({
+                napaka: "Izpolni vsa obvezna polja."
+            })
+        }
+
+        if(password.length < 8 || !/[0-9!@#$%^&*]/.test(password)){
+            return res.status(400).json({
+                napaka : "Geslo mora imeti vsaj 8 znakov in vsebovati številko ali posebni znak."
+            });
+        }
+
+        const result = await pool.query(`
+            INSERT INTO Uporabnik
+            (Ime, Priimek, Username, Password, Email, DatumRojstva, Spol, TipUporabnikaid_TipUporabnika)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, 1)
+                    RETURNING id_Uporabnik, Ime, Priimek, Username, Email
+                    `, [ime, priimek, username, password, email, datumRojstva || null, spol || null]);
+
+                    res.status(201).json({
+                        sporocilo: "Registracija uspešna.",
+                        uporabnik: result.rows[0]
+                    });   
+    } catch (err) {
+        res.status(500).json({
+            napaka: err.message
+        });
+    }
+});
+
 module.exports = router;

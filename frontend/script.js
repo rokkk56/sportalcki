@@ -1324,3 +1324,74 @@ async function naloziPrijaveNaAktivnost(id) {
 if (document.getElementById("mojeAktivnosti")) {
   naloziMojeAktivnosti();
 }
+
+//preverjanje dolžine in posebnih znakov pri geslih novih uporabnikov
+function preveriGeslo(geslo) {
+  const dovoljDolgo = geslo.length >= 8;
+  const imaStevilkoAliZnak = /[0-9!@#$%^&*]/.test(geslo);
+
+  return dovoljDolgo && imaStevilkoAliZnak;
+}
+
+const registerForm = document.getElementById("registerForm");
+
+if(registerForm) {
+  registerForm.addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const ime = document.getElementById("regIme").value;
+    const priimek = document.getElementById("regPriimek").value;
+    const username = document.getElementById("regUsername").value;
+    const email = document.getElementById("regEmail").value;
+    const password = document.getElementById("regPassword").value;
+    const datumRojstva = document.getElementById("regDatumRojstva").value;
+    const spol = document.getElementById("regSpol").value;
+    const message = document.getElementById("registerMessage");
+
+    message.textContent = "";
+    message.classList.remove("success-message", "error-message");
+
+    if(!preveriGeslo(password)){
+      message.textContent = "Geslo mora imeti 8 znakov in vsebovati število ali posebni znak.";
+      message.classList.add("error-message");
+      return;
+    }
+
+    try{
+      const odgovor = await fetch (`${API_URL}/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+       },
+        body: JSON.stringify({
+          ime,
+          priimek,
+          username,
+          email,
+          password,
+          datumRojstva,
+          spol
+        })
+      });
+
+      const podatki = await odgovor.json();
+
+      if(!odgovor.ok) {
+        message.textContent = podatki.napaka || "Registracija ni uspela.";
+        message.classList.add("error-message");
+        return;
+      }
+
+      message.textContent = "Registracija uspešna. Zdaj se lahko prijaviš.";
+      message.classList.add("success-message");
+
+      setTimeout(() => {
+        window.location.href = "prijava.html";
+      }, 1500);
+
+    } catch (err) {
+      message.textContent = "Napaka pri povezavi s strežnikom."
+      message.classList.add("error-message");
+    }
+  });
+}

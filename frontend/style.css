@@ -515,3 +515,22 @@ footer {
 .comment-text strong {
   color: #495057;
 }
+
+.form-message {
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+.success-message {
+  color: green;
+}
+
+.error-message {
+  color: red;
+}
+
+#registerForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
