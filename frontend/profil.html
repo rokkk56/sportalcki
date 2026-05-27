@@ -25,16 +25,18 @@
   <main class="page">
     <section class="profile-grid">
       <aside class="card profile-card">
+        <div class="profile-image-wrapper" onclick="document.getElementById('profileImageInput').click()">
+        <img id="profileImage" class="profile-img" alt="Profilna slika">
         <div class="avatar" id="profileAvatar">?</div>
+        </div>
 
-        <h2 id="profileName">
-          ime
-        </h2>
+        <input type="file" id="profileImageInput" accept="image/*" hidden>
+  
+        <h2 id="profileName">Ime uporabnika</h2>
 
-        <p id="profileInfo">
-          Maribor, 23 let
-        </p>
-        <div class="rating">★★★★★ <span>4.8</span></div>
+        <p id="profileInfo">Podatki uporabnika</p>
+
+        <button class="btn danger" onclick="odjava()">Odjava</button>
       </aside>
       <section class="card">
         <h1>Moje Aktivnosti</h1>

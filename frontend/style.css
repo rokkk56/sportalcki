@@ -358,6 +358,10 @@ label {
 
 .profile-card {
   text-align: center;
+  padding: 36px;
+  max-width: 500px;
+  margin: 0 auto;
+  align-self: start;
 }
 
 .avatar {
@@ -533,4 +537,38 @@ footer {
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.profile-image-wrapper {
+  width: 120px;
+  height: 120px;
+  cursor: pointer;
+
+  margin: 0 auto 18px;
+
+  border-radius: 50%;
+  overflow: hidden;
+
+  background: linear-gradient(135deg, #2d7df0, #19b37b);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+}
+
+.profile-img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  display: none;
+}
+
+.avatar {
+  font-size: 48px;
+  font-weight: 800;
+  color: white;
 }

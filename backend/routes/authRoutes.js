@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 
 const pool = require("../db");
-const { JWT_SECRET } = require("../middleware/authMiddleware");
+const { JWT_SECRET, preveriToken } = require("../middleware/authMiddleware");
 
 router.post("/login", async (req, res) => {
     const { username, password } = req.body;
@@ -77,6 +77,7 @@ router.post("/login", async (req, res) => {
     }
 });
 
+//dodajanje registriranega uporabnika v bazo
 router.post("/register", async(req,res) => {
     try{
         const {
@@ -116,6 +117,50 @@ router.post("/register", async(req,res) => {
         res.status(500).json({
             napaka: err.message
         });
+    }
+});
+
+//za prikazovanje podatkov na profil.html
+router.get("/me", preveriToken, async (req,res) =>{
+    try{
+        const uporabnikId = req.uporabnik.id;
+
+        const result = await pool.query(`
+            SELECT 
+                id_Uporabnik,
+                Ime,
+                Priimek,
+                Username,
+                Email,
+                DatumRojstva,
+                Spol,
+                ProfilnaSlika
+            FROM Uporabnik
+            WHERE id_Uporabnik = $1
+            `, [uporabnikId]);
+
+            res.json(result.rows[0]);
+
+    } catch (err) {
+        res.status(500).json({napaka:err.message});
+    }
+});
+
+//za dodajanje profilne slike v tabeli Uporabnik
+router.put("/profilna-slika", preveriToken, async(req,res) => {
+    try{
+        const uporabnikId = req.uporabnik.id;
+        const {profilnaSlika} = req.body;
+
+        await pool.query(`
+            UPDATE Uporabnik
+            SET ProfilnaSlika = $1
+            WHERE id_Uporabnik = $2
+            `, [profilnaSlika,uporabnikId]);
+
+        res.json({ sporocilo: "Profilna slika shranjena."});
+    }catch (err) {
+        res.status(500).json({napaka:err.message});
     }
 });
 

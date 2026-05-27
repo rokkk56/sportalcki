@@ -1395,3 +1395,74 @@ if(registerForm) {
     }
   });
 }
+
+//za nalaganje podatkov uporabnika na profil.html
+async function naloziProfil() {
+  const profileName = document.getElementById("profileName");
+  if(!profileName) return;
+
+  const token = localStorage.getItem("token");
+
+  if(!token) {
+    window.location.href = "prijava.html";
+    return;
+  }
+
+  const odgovor = await fetch(`${API_URL}/auth/me`,{
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  const uporabnik = await odgovor.json();
+
+  document.getElementById("profileName").textContent = `${uporabnik.ime} ${uporabnik.priimek}`;
+
+  document.getElementById("profileInfo").innerHTML = `@${uporabnik.username}<br>${uporabnik.email} `;
+
+  document.getElementById("profileAvatar").textContent = uporabnik.ime[0].toUpperCase();
+
+   if (uporabnik.profilnaslika) {
+    const img = document.getElementById("profileImage");
+    const avatar = document.getElementById("profileAvatar");
+
+    img.src = uporabnik.profilnaslika;
+
+    img.style.display = "block";
+    avatar.style.display = "none";
+  }
+}
+naloziProfil();
+
+//dodajanje profilne slike
+const profileImageInput = document.getElementById("profileImageInput");
+
+if (profileImageInput) {
+  profileImageInput.addEventListener("change", function() {
+    const file = profileImageInput.files[0];
+    if(!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = async function(e) {
+      const token = localStorage.getItem("token");
+
+      await fetch(`${API_URL}/auth/profilna-slika`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          profilnaSlika: e.target.result
+        })
+      });
+
+      document.getElementById("profileImage").src = e.target.result;
+      document.getElementById("profileImage").style.display = "block";
+      document.getElementById("profileAvatar").style.display = "none";
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
