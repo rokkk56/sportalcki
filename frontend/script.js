@@ -52,7 +52,6 @@ async function naloziAktivnosti(redniTermini) {
         gender: a.spol || 'Mešano',
         age: a.starostnaskupina || 'Vsi',
         komentarTekst: a.komentartekst || '',
-        komentarSlika: a.komentarslika || '',
         komentatorIme: a.komentatorime || '',
         komentatorPriimek: a.komentatorpriimek || '',
 
@@ -81,8 +80,6 @@ async function naloziAktivnosti(redniTermini) {
 function renderActivities() {
   const list = document.getElementById('activityList');
   if (!list) return;
-  console.log("RENDER SE JE ZAGNAL!");
-console.log("Aktivnosti v renderju:", activities);
 
   const search = document.getElementById('search').value.toLowerCase();
   const sport = document.getElementById('sport').value;
@@ -102,34 +99,15 @@ console.log("Aktivnosti v renderju:", activities);
   list.innerHTML = filtered.map((a, index) => {
   let komentarHTML = '';
     if (a.komentarTekst) {
-      let slikaHTML = '';
-      if (a.komentarSlika) {
-        slikaHTML = `<br><img src="http://localhost:3000${a.komentarSlika}" alt="Slika komentarja" class="comment-img" style="max-width: 300px; width: 100%; margin-top: 10px; display: block; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);">`;
-}
       komentarHTML = `
         <div class="feedback-box">
           <h6>Povratne informacije:</h6>
           <p class="comment-text">
             <strong>${a.komentatorIme} ${a.komentatorPriimek}:</strong> "${a.komentarTekst}"
           </p>
-          ${slikaHTML}
         </div>
       `;
     }
-    const obrazecZaKomentar = `
-      <div class="add-comment-box" style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ccc;">
-        <form onsubmit="oddajKomentar(event, ${a.id})">
-          <div style="margin-bottom: 8px;">
-            <input type="text" placeholder="Napiši komentar..." required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-          </div>
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <input type="file" accept="image/*" style="font-size: 0.85em;">
-            <button type="submit" class="btn primary small" style="padding: 5px 10px;">Objavi</button>
-          </div>
-        </form>
-      </div>
-    `;
-
     const jeVseckan = vseckaniOrganizatorji.includes(a.organizatorId);
 
     return `
@@ -146,56 +124,14 @@ console.log("Aktivnosti v renderju:", activities);
           <span>${a.spots} prostih mest</span>
         </div>
         ${komentarHTML}
-      ${obrazecZaKomentar}  </div>
+      </div>
       <div class="activity-buttons">
         <button onclick="toggleJoin(this)" class="btn ${a.spots > 0 ? 'primary' : 'disabled'} small" ${a.spots === 0 ? 'disabled' : ''}>
           ${a.spots > 0 ? 'Prijavi se' : 'Polno'}
         </button>
       </div>
        <button onclick="toggleHeart(this, ${a.organizatorId})" class="heart-btn ${jeVseckan ? 'liked' : ''}">${jeVseckan ? '♥' : '♡'}</button>
-    </article>`;
-  }).join('') || '<p class="empty">Ni najdenih aktivnosti za izbrane filtre.</p>';
-}
-
- async function oddajKomentar(event, idTermina) {
-  event.preventDefault();
-
-  const forma = event.target;
-  const tekstVnos = forma.querySelector('input[type="text"]');
-  const slikaVnos = forma.querySelector('input[type="file"]');
-
-  const formData = new FormData();
-  formData.append('komentar', tekstVnos.value);
-  formData.append('idTermina', idTermina);
-  
-  if (slikaVnos.files.length > 0) {
-    formData.append('slika', slikaVnos.files[0]);
-  }
-
-  try {
-    const token = localStorage.getItem('token');
-    const odgovor = await fetch('http://localhost:3000/api/komentarji', {
-      method: 'POST',
-      headers: {
-      'Authorization': `Bearer ${token}` 
-      },
-      body: formData
-    });
-
-    if (!odgovor.ok) {
-      const napakaPodatki = await odgovor.json();
-      throw new Error(napakaPodatki.napaka || "Napaka pri shranjevanju komentarja.");
-    }
-
-    alert("Komentar uspešno oddan!");
-    forma.reset();
-  
-    await naloziAktivnosti(true); 
-
-  } catch (napaka) {
-    console.error("Napaka pri oddaji komentarja:", napaka.message);
-    alert("Komentarja ni bilo mogoče oddati: " + napaka.message);
-  }
+    </article>`;}).join('') || '<p class="empty">Ni najdenih aktivnosti za izbrane filtre.</p>';
 }
 
 function toggleJoin(button) {

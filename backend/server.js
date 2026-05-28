@@ -28,8 +28,6 @@ app.use("/api/sporti", sportiRoutes);
 app.use("/api/redniTermini", redniTerminiRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/prijave", prijaveRoutes);
-app.use('/api/komentarji', require('./routes/komentarjiRoutes'));
-app.use('/uploads', express.static('uploads'));
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend", "index.html"));

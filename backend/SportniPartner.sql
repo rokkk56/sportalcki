@@ -262,24 +262,3 @@ SELECT
 FROM uporabnik u
          JOIN tipuporabnika t
               ON u.tipuporabnikaid_tipuporabnika = t.id_tipuporabnika;
-
-ALTER TABLE Komentar ADD COLUMN slika TEXT NULL;
-UPDATE Komentar 
-SET 
-    Komentar = 'Vedno se imamo ful fajn, priporočam!', 
-    slika = '/uploads/priporocam.jpg' 
-WHERE 
-    Uporabnikid_Uporabnik = 16 
-    AND Terminid_Termin = 1 
-    AND Komentar = 'Prinesem rezervno žogo';
-
-UPDATE Komentar 
-SET 
-    Komentar = 'Najboljša družba in odbojka!', 
-    slika = '/uploads/odbojka.jpg' 
-WHERE 
-    Uporabnikid_Uporabnik = 23
-    AND Terminid_Termin = 4
-    AND Komentar = 'A loparje dobimo tam ali prinesemo svoje?';
-
-    GRANT USAGE, SELECT ON SEQUENCE komentar_id_komentar_seq TO PUBLIC;
