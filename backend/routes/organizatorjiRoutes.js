@@ -97,17 +97,23 @@ router.get("/vseckani", preveriToken, async(req,res) => {
                 Uporabnik.Ime,
                 Uporabnik.Priimek,
                 Uporabnik.Username,
-                Termin.id_Termin,
-                Termin.Naziv AS TerminNaziv,
-                Termin.Datum,
-                Termin.SteviloMest
+                COALESCE(
+                    json_agg(
+                        json_build_object(
+                            'naziv', Termin.naziv,
+                            'datum', Termin.Datum
+                        )
+                    ) FILTER (WHERE Termin.id_Termin IS NOT NULL),
+                    '[]'
+                ) AS aktivnosti
             FROM VseckaniOrganizator v
             JOIN Uporabnik
                 ON v.Organizatorid_Uporabnik = Uporabnik.id_Uporabnik
             LEFT JOIN Termin
                 ON Termin.Uporabnikid_Organizator = Uporabnik.id_Uporabnik
             WHERE v.Uporabnikid_Uporabnik = $1
-            ORDER BY Uporabnik.Ime,Uporabnik.Priimek,Termin.Datum`,
+            GROUP BY Uporabnik.id_Uporabnik, Uporabnik.Ime, Uporabnik.Priimek, Uporabnik.Username
+            ORDER BY Uporabnik.Priimek`,
         [uporabnikId]);
 
         res.json(result.rows);

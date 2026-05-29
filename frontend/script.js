@@ -447,13 +447,13 @@ async function naloziVseckaneOrganizatorje() {
 
   podatki.forEach(o => {
     container.innerHTML +=`
-    <div class="notification">
-      <div>
-        <b>${o.ime} ${o.priimek}</b>
-        <p>@${o.username}</p>
-        <small>
-          ${o.terminnaziv ? "Prihodnja aktivnost: " + o.terminnaziv : "Ni prihodnjih aktivnosti."}
-        </small>
+    <div class="organizator-card">
+      <b>${o.ime} ${o.priimek}</b>
+      <p>@${o.username}</p>
+      <div class="organizator-hover">
+        <h4>Aktivnosti:</h4>
+        ${o.aktivnosti.length > 0 ? o.aktivnosti.map(a => `<p>${a.naziv}</p>`).join("")
+        : "<p>Ni aktivnosti.</p>"}
       </div>
     </div>`;
   });
@@ -1415,11 +1415,12 @@ async function naloziProfil() {
   });
 
   const uporabnik = await odgovor.json();
+  document.getElementById("editIme").value = uporabnik.ime;
+  document.getElementById("editPriimek").value = uporabnik.priimek;
+  document.getElementById("editEmail").value = uporabnik.email;
 
   document.getElementById("profileName").textContent = `${uporabnik.ime} ${uporabnik.priimek}`;
-
   document.getElementById("profileInfo").innerHTML = `@${uporabnik.username}<br>${uporabnik.email} `;
-
   document.getElementById("profileAvatar").textContent = uporabnik.ime[0].toUpperCase();
 
    if (uporabnik.profilnaslika) {
@@ -1482,4 +1483,45 @@ function prikaziRedneTermine() {
     if (gumb) gumb.textContent = "Redni termini";
     naloziAktivnosti(false);
   }
+}
+
+//urejanje podatkov uporabnika
+const editProfileForm = document.getElementById("editProfileForm");
+
+if(editProfileForm) {
+  editProfileForm.addEventListener("submit", async function(e) {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    const ime = document.getElementById("editIme").value;
+    const priimek = document.getElementById("editPriimek").value;
+    const email = document.getElementById("editEmail").value;
+    const password = document.getElementById("editPassword").value;
+    const message = document.getElementById("editProfileMessage");
+
+    const odgovor = await fetch(`${API_URL}/auth/me`,{
+    method : "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+
+    body: JSON.stringify({
+      ime,
+      priimek,
+      email,
+      password
+    })
+    });
+
+    const podatki = await odgovor.json();
+
+    if (!odgovor.ok){
+      message.textContent = podatki.napaka;
+      message.className = "error-message";
+      return;
+    }
+    message.textContent = "Profil uspešno posodobljen."
+    message.className = "success-message";
+    naloziProfil();
+  });
 }

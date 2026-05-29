@@ -29,12 +29,22 @@
         </div>
 
         <input type="file" id="profileImageInput" accept="image/*" hidden>
-  
+        <small>Izberi profilno sliko</small>
         <h2 id="profileName">Ime uporabnika</h2>
 
         <p id="profileInfo">Podatki uporabnika</p>
 
-        <button class="btn danger" onclick="odjava()">Odjava</button>
+        <button class="btn danger" onclick="odjava()">Odjava</button><br>
+        <hr style="margin-top: 10px; margin-bottom: 10px;">
+        <h3>Uredi profil</h3>
+          <form id="editProfileForm">
+            <input id="editIme" type="text" placeholder="Ime">
+            <input id="editPriimek" type="text" placeholder="Priimek">
+            <input id="editEmail" type="email" placeholder="Email">
+            <input id="editPassword" type="password" placeholder="Novo geslo">
+            <button class="btn primary" type="submit">Shrani spremembe</button>
+            <p id="editProfileMessage"></p>
+          </form>
       </aside>
       <section class="card">
         <h1>Moje Aktivnosti</h1>
@@ -44,7 +54,7 @@
 
     </section>
       <section class="card">
-        <h1>Zgodovina aktivnosti</h1>
+        <h2>Zgodovina aktivnosti</h2>
       </section>
 
 

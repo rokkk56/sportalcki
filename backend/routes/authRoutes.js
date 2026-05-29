@@ -146,6 +146,57 @@ router.get("/me", preveriToken, async (req,res) =>{
     }
 });
 
+//za spreminjanje podatkov na profil.html
+router.put("/me", preveriToken, async (req,res) =>{
+    try{
+        const uporabnikId = req.uporabnik.id;
+
+        const {
+            ime,
+            priimek,
+            email,
+            password
+        } = req.body;
+
+        if (!ime || !priimek || !email){
+            return res.status(400).json({
+                napaka: "Izpolni vsa obvezna polja."
+            });
+        }
+
+        if (password && (password.length < 8 || !/[0-9!@#$%^&*]/.test(password))){
+            return res.status(400).json({
+                napaka:"Geslo mora imeti vsaj 8 znakov in številko ali posebni znak."
+            });
+        }
+
+        if(password) {
+            await pool.query(`
+            UPDATE Uporabnik
+            SET
+                Ime = $1,
+                Priimek = $2,
+                Email = $3,
+                Password = $4
+            WHERE id_Uporabnik = $5
+            `, [ime,priimek,email,password,uporabnikId]);
+        } else {
+            await pool.query(`
+            UPDATE Uporabnik
+            SET
+                Ime = $1,
+                Priimek = $2,
+                Email = $3
+            WHERE id_Uporabnik = $4
+            `, [ime,priimek,email,uporabnikId]);
+        }
+        res.json({sporocilo:"Profil uspešno posodobljen"});
+
+    } catch (err) {
+        res.status(500).json({napaka:err.message});
+    }
+});
+
 //za dodajanje profilne slike v tabeli Uporabnik
 router.put("/profilna-slika", preveriToken, async(req,res) => {
     try{

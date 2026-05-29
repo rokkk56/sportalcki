@@ -354,6 +354,7 @@ label {
   display: grid;
   grid-template-columns: 320px 1fr;
   gap: 24px;
+  align-items: start;
 }
 
 .profile-card {
@@ -361,6 +362,10 @@ label {
   padding: 36px;
   max-width: 500px;
   margin: 0 auto;
+  align-self: start;
+}
+
+.profile-main-card {
   align-self: start;
 }
 
@@ -428,6 +433,7 @@ footer {
 
   .profile-grid {
     grid-template-columns: 1fr;
+    align-items: start;
   }
 
   .activity-card {
@@ -599,4 +605,40 @@ footer {
   padding: 16px 28px;
   border-radius: 16px;
   white-space: nowrap;
+}
+
+.organizator-card {
+  position: relative;
+  padding: 14px;
+  border-radius: 12px;
+  background: #f8fafc;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+.organizator-hover {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 260px;
+  background: white;
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+  z-index: 100;
+}
+
+.organizator-card:hover .organizator-hover {
+  display: block;
+}
+
+.organizator-hover p {
+  margin: 6px 0;
+}
+
+#editProfileForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
