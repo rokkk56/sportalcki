@@ -642,3 +642,10 @@ footer {
   flex-direction: column;
   gap: 14px;
 }
+
+#organizatorSporocilo {
+  display: block;
+  color: red;
+  font-weight: 700;
+  margin-top: 10px;
+}

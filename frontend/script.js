@@ -465,9 +465,12 @@ async function  toggleHeart(button, organizatorId) {
   const token = localStorage.getItem("token");
 
   if(!token){
-    alert("Za všečkanje organizatorja se moraš prijaviti.");
-    return;
+  const sporocilo = document.getElementById("organizatorSporocilo");
+  if(sporocilo){
+    sporocilo.textContent = "Za všečkanje organizatorja se moraš prijaviti.";
   }
+  return;
+}
 
   button.classList.toggle("liked");
   const jeVseckan = button.classList.contains("liked");
