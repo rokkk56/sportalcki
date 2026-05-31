@@ -746,7 +746,7 @@ async function odjaviSeIzProfila(terminId) {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    alert("Za odjavo se moraš prijaviti.");
+    prikaziSporociloNaStrani("Za odjavo se moraš prijaviti.", "error");
     return;
   }
 
@@ -760,12 +760,13 @@ async function odjaviSeIzProfila(terminId) {
   const podatki = await odgovor.json();
 
   if (!odgovor.ok) {
-    alert(podatki.napaka || "Napaka pri odjavi.");
+    prikaziSporociloNaStrani(podatki.napaka || "Napaka pri odjavi.", "error");
     return;
   }
 
-  alert(podatki.sporocilo);
-  naloziMojePrijavljeneAktivnosti();
+  await naloziMojePrijavljeneAktivnosti();
+
+  prikaziSporociloNaStrani(podatki.sporocilo, "success");
 }
 
 naloziMojePrijavljeneAktivnosti();
