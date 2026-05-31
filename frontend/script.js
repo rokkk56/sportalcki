@@ -56,7 +56,7 @@ async function naloziAktivnosti(redniTermini) {
         komentarTekst: a.komentartekst || '',
         komentatorIme: a.komentatorime || '',
         komentatorPriimek: a.komentatorpriimek || '',
-
+        komentarSlika: a.komentarslika || '',
         emoji: a.sport === 'Nogomet' ? '⚽' :
           a.sport === 'Tenis' ? '🎾' :
             a.sport === 'Košarka' ? '🏀' :
@@ -134,13 +134,38 @@ function renderActivities() {
   list.innerHTML = filtered.map((a, index) => {
   let komentarHTML = '';
     if (a.komentarTekst) {
+      let slikaHTML = '';
+      if (a.komentarSlika) {
+        slikaHTML = `
+          <div class="comment-image-container" style="margin-right: 15px; flex-shrink: 0;">
+            <img src="${a.komentarSlika}" alt="Slika komentarja" style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px;">
+          </div>
+        `;
+      }
       komentarHTML = `
-        <div class="feedback-box">
-          <h6>Povratne informacije:</h6>
-          <p class="comment-text">
-            <strong>${a.komentatorIme} ${a.komentatorPriimek}:</strong> "${a.komentarTekst}"
-          </p>
+        <div class="feedback-box" style="display: flex; align-items: flex-start; margin-top: 8px;">
+          ${slikaHTML} <div class="comment-content">
+            <h6>Povratne informacije:</h6>
+            <p class="comment-text">
+              <strong>${a.komentatorIme} ${a.komentatorPriimek}:</strong> "${a.komentarTekst}"
+            </p>
+          </div>
         </div>
+      `;
+    }
+    let dodajKomentarHTML = '';
+    if(prikazRednihTerminov){
+      dodajKomentarHTML = `
+      <div class="feedback-box">
+        <form id="redniKomentarForm-${a.id}" class="card" onsubmit="oddajRedniKomentar(event, ${a.id})">
+          <textarea id="redniKomentarInput-${a.id}" placeholder="Napiši komentar..." required></textarea>
+        
+          <input type="file" id="redniKomentarImageInput-${a.id}" accept="image/*" style="margin-bottom:10px">
+        
+          <button class="btn primary" type="submit">Pošlji komentar</button>
+          <p id="redniKomentarSporocilo-${a.id}"></p>
+        </form>
+      </div>
       `;
     }
     const jeVseckan = vseckaniOrganizatorji.includes(a.organizatorId);
@@ -160,6 +185,7 @@ function renderActivities() {
           <span>${a.spots} prostih mest</span>
         </div>
         ${komentarHTML}
+        ${dodajKomentarHTML}
       </div>
       <div class="activity-buttons">
         <button onclick="toggleJoin(this, ${a.id})" class="btn ${jePrijavljen ? 'danger' : (a.spots > 0 ? 'primary' : 'disabled')} small" ${a.spots === 0 && !jePrijavljen ? 'disabled' : ''}>
@@ -463,7 +489,8 @@ if (komentarForm) {
       },
       body: JSON.stringify({
         komentar: komentar,
-        terminId : null
+        terminId : null,
+        slika: null
       })
     });
 
@@ -1465,4 +1492,70 @@ if(editProfileForm) {
     message.className = "success-message";
     naloziProfil();
   });
+}
+
+async function oddajRedniKomentar(e, activityId) {
+  e.preventDefault();
+
+  const token = localStorage.getItem("token");
+  const komentarInput = document.getElementById(`redniKomentarInput-${activityId}`);
+  const slikaInput = document.getElementById(`redniKomentarImageInput-${activityId}`);
+  const sporocilo = document.getElementById(`redniKomentarSporocilo-${activityId}`);
+
+  if (!token) {
+    sporocilo.textContent = "Za dodajanje komentarja se moraš prijaviti.";
+    return;
+  }
+
+  const pretvoriVSlikoBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  let slikaTekst = null;
+
+  if (slikaInput && slikaInput.files && slikaInput.files[0]) {
+    //console.log("Datoteka najdena:", slikaInput.files[0].name);
+    try {
+      slikaTekst = await pretvoriVSlikoBase64(slikaInput.files[0]);
+    } catch (napakaPriSliki) {
+      console.error("Napaka pri branju slike:", napakaPriSliki);
+      sporocilo.textContent = "Napaka pri obdelavi slike.";
+      return;
+    }
+  }
+
+  try {
+    sporocilo.textContent = "Pošiljam...";
+
+    const odgovor = await fetch(`${API_URL}/komentarji`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        komentar: komentarInput.value,
+        terminId: activityId,
+        slika: slikaTekst
+      })
+    });
+
+    if (!odgovor.ok) {
+      sporocilo.textContent = "Napaka pri dodajanju komentarja.";
+      return;
+    }
+
+    komentarInput.value = "";
+    slikaInput.value = "";
+    sporocilo.textContent = "Komentar uspešno dodan.";
+
+  } catch (napaka) {
+    console.error("Omrežna napaka:", napaka);
+    sporocilo.textContent = "Napaka na omrežju.";
+  }
 }

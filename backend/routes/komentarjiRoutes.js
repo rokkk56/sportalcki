@@ -24,20 +24,21 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.post("/", preveriToken, async (req,res) => {
-    try{
+router.post("/", preveriToken, async (req, res) => {
+    try {
         const uporabnikId = req.uporabnik.id;
-        const {komentar, terminId} = req.body;
+        
+        const { komentar, terminId, slika } = req.body;
 
         const result = await pool.query(`
             INSERT INTO Komentar
-            (Uporabnikid_Uporabnik, Komentar, Terminid_Termin)
-            VALUES ($1, $2, $3)
+            (Uporabnikid_Uporabnik, Komentar, Terminid_Termin, Slika)
+            VALUES ($1, $2, $3, $4)
             RETURNING * `,
-        [uporabnikId, komentar, terminId || null]);
+        [ uporabnikId, komentar, terminId || null, slika || null ]);
 
-        res.status(201).json(result.rows[0])
-    }catch (err){
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
         res.status(500).json({napaka: err.message});
     }
 });

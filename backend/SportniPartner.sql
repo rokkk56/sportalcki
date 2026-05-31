@@ -263,3 +263,6 @@ SELECT
 FROM uporabnik u
          JOIN tipuporabnika t
               ON u.tipuporabnikaid_tipuporabnika = t.id_tipuporabnika;
+
+-- komentar slika
+ALTER TABLE Komentar ADD COLUMN slika TEXT NULL;
