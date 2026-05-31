@@ -649,3 +649,55 @@ footer {
   font-weight: 700;
   margin-top: 10px;
 }
+
+
+.page-message {
+  margin: 16px 0;
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-weight: 600;
+}
+
+.page-message.success {
+  background: #e8f7e8;
+  color: #1f6b2a;
+  border: 1px solid #b7e4b8;
+}
+
+.page-message.error {
+  background: #fdeaea;
+  color: #b42318;
+  border: 1px solid #f5b5b5;
+}
+
+.toast-message {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 9999;
+  padding: 14px 20px;
+  border-radius: 14px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.toast-message.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast-message.success {
+  background: #e8f7e8;
+  color: #1f6b2a;
+  border: 1px solid #b7e4b8;
+}
+
+.toast-message.error {
+  background: #fdeaea;
+  color: #b42318;
+  border: 1px solid #f5b5b5;
+}

@@ -171,17 +171,37 @@ function renderActivities() {
     </article>`;}).join('') || '<p class="empty">Ni najdenih aktivnosti za izbrane filtre.</p>';
 }
 
+function prikaziSporociloNaStrani(besedilo, tip = "success") {
+  let container = document.getElementById("toastMessage");
+
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toastMessage";
+    document.body.appendChild(container);
+  }
+
+  container.className = `toast-message ${tip}`;
+  container.textContent = besedilo;
+  container.classList.add("show");
+
+  setTimeout(() => {
+    container.classList.remove("show");
+  }, 3500);
+}
+
 async function toggleJoin(button, terminId) {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    alert("Za prijavo na aktivnost se moraš najprej prijaviti.");
-    window.location.href = "prijava.html";
+    prikaziSporociloNaStrani("Za prijavo na aktivnost se moraš najprej prijaviti.", "error");
+    setTimeout(() => {
+      window.location.href = "prijava.html";
+    }, 1200);
     return;
   }
 
   if (!terminId) {
-    alert("Napaka: manjka ID termina.");
+    prikaziSporociloNaStrani("Napaka: manjka ID termina.", "error");
     return;
   }
 
@@ -198,11 +218,9 @@ async function toggleJoin(button, terminId) {
     const podatki = await odgovor.json();
 
     if (!odgovor.ok) {
-      alert(podatki.napaka || "Prišlo je do napake.");
+      prikaziSporociloNaStrani(podatki.napaka || "Prišlo je do napake.", "error");
       return;
     }
-
-    alert(podatki.sporocilo);
 
     await naloziAktivnosti(false);
 
@@ -210,9 +228,11 @@ async function toggleJoin(button, terminId) {
       await naloziMojePrijavljeneAktivnosti();
     }
 
+prikaziSporociloNaStrani(podatki.sporocilo, "success");
+
   } catch (err) {
     console.error(err);
-    alert("Napaka pri povezavi s strežnikom.");
+    prikaziSporociloNaStrani("Napaka pri povezavi s strežnikom.", "error");
   }
 }
 
