@@ -4,62 +4,6 @@ const router = express.Router();
 const pool = require("../db");
 const { preveriToken } = require("../middleware/authMiddleware");
 
-// prijava na termin
-router.post("/:terminId", preveriToken, async function (req, res) {
-  try {
-    const uporabnikId = req.uporabnik.id;
-    const terminId = req.params.terminId;
-
-    const termin = await pool.query(
-      `SELECT stevilomest FROM Termin WHERE id_Termin = $1`,
-      [terminId]
-    );
-
-    if (termin.rows.length === 0) {
-      return res.status(404).json({
-        napaka: "Aktivnost ne obstaja."
-      });
-    }
-
-    if (termin.rows[0].stevilomest <= 0) {
-      return res.status(400).json({
-        napaka: "Na tej aktivnosti ni več prostih mest."
-      });
-    }
-
-    await pool.query(
-      `INSERT INTO Uporabnik_Termin
-       (Uporabnikid_Uporabnik, Terminid_Termin)
-       VALUES ($1, $2)`,
-      [uporabnikId, terminId]
-    );
-
-    await pool.query(
-      `UPDATE Termin
-       SET stevilomest = stevilomest - 1
-       WHERE id_Termin = $1`,
-      [terminId]
-    );
-
-    res.json({
-      sporocilo: "Uspešno si se prijavil/a na aktivnost."
-    });
-
-  } catch (err) {
-    console.error(err);
-
-    if (err.code === "23505") {
-      return res.status(400).json({
-        napaka: "Na to aktivnost si že prijavljen/a."
-      });
-    }
-
-    res.status(500).json({
-      napaka: "Napaka pri prijavi na aktivnost."
-    });
-  }
-});
-
 // aktivnosti, na katere je uporabnik prijavljen
 router.get("/moje/aktivnosti", preveriToken, async function (req, res) {
   try {
@@ -106,42 +50,136 @@ router.get("/moje/aktivnosti", preveriToken, async function (req, res) {
   }
 });
 
-// odjava s termina
-router.delete("/:terminId", preveriToken, async function (req, res) {
+// prijava na termin
+router.post("/:terminId", preveriToken, async function (req, res) {
+  const client = await pool.connect();
+
   try {
     const uporabnikId = req.uporabnik.id;
     const terminId = req.params.terminId;
 
-    const prijava = await pool.query(
-      `DELETE FROM Uporabnik_Termin
-       WHERE Uporabnikid_Uporabnik = $1
-       AND Terminid_Termin = $2
-       RETURNING *`,
+    await client.query("BEGIN");
+
+    const termin = await client.query(
+      `
+      SELECT stevilomest
+      FROM Termin
+      WHERE id_Termin = $1
+      FOR UPDATE
+      `,
+      [terminId]
+    );
+
+    if (termin.rows.length === 0) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({
+        napaka: "Aktivnost ne obstaja."
+      });
+    }
+
+    if (termin.rows[0].stevilomest <= 0) {
+      await client.query("ROLLBACK");
+      return res.status(400).json({
+        napaka: "Na tej aktivnosti ni več prostih mest."
+      });
+    }
+
+    await client.query(
+      `
+      INSERT INTO Uporabnik_Termin
+      (Uporabnikid_Uporabnik, Terminid_Termin)
+      VALUES ($1, $2)
+      `,
+      [uporabnikId, terminId]
+    );
+
+    await client.query(
+      `
+      UPDATE Termin
+      SET stevilomest = stevilomest - 1
+      WHERE id_Termin = $1
+      `,
+      [terminId]
+    );
+
+    await client.query("COMMIT");
+
+    res.json({
+      sporocilo: "Uspešno si se prijavil/a na aktivnost."
+    });
+
+  } catch (err) {
+    await client.query("ROLLBACK");
+    console.error(err);
+
+    if (err.code === "23505") {
+      return res.status(400).json({
+        napaka: "Na to aktivnost si že prijavljen/a."
+      });
+    }
+
+    res.status(500).json({
+      napaka: "Napaka pri prijavi na aktivnost."
+    });
+
+  } finally {
+    client.release();
+  }
+});
+
+
+// odjava s termina
+router.delete("/:terminId", preveriToken, async function (req, res) {
+  const client = await pool.connect();
+
+  try {
+    const uporabnikId = req.uporabnik.id;
+    const terminId = req.params.terminId;
+
+    await client.query("BEGIN");
+
+    const prijava = await client.query(
+      `
+      DELETE FROM Uporabnik_Termin
+      WHERE Uporabnikid_Uporabnik = $1
+      AND Terminid_Termin = $2
+      RETURNING *
+      `,
       [uporabnikId, terminId]
     );
 
     if (prijava.rows.length === 0) {
+      await client.query("ROLLBACK");
       return res.status(404).json({
         napaka: "Na to aktivnost nisi prijavljen/a."
       });
     }
 
-    await pool.query(
-      `UPDATE Termin
-       SET stevilomest = stevilomest + 1
-       WHERE id_Termin = $1`,
+    await client.query(
+      `
+      UPDATE Termin
+      SET stevilomest = stevilomest + 1
+      WHERE id_Termin = $1
+      `,
       [terminId]
     );
+
+    await client.query("COMMIT");
 
     res.json({
       sporocilo: "Uspešno si se odjavil/a z aktivnosti."
     });
 
   } catch (err) {
+    await client.query("ROLLBACK");
     console.error(err);
+
     res.status(500).json({
       napaka: "Napaka pri odjavi z aktivnosti."
     });
+
+  } finally {
+    client.release();
   }
 });
 

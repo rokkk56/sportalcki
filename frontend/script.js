@@ -8,6 +8,8 @@
 */
 let activities = [];
 let vseckaniOrganizatorji =[];
+let prijavljeniTermini = [];
+
 async function naloziAktivnosti(redniTermini) {
   try {
     var odgovor = null;
@@ -66,6 +68,7 @@ async function naloziAktivnosti(redniTermini) {
 
     console.log(activities);
     await pridobiVseckaneIds();
+    await pridobiPrijavljeneTermine();
     renderActivities();
 
   } catch (napaka) {
@@ -74,6 +77,38 @@ async function naloziAktivnosti(redniTermini) {
     if (list) {
       list.innerHTML = `<p class="empty">Napaka pri nalaganju: ${napaka.message}</p>`;
     }
+  }
+}
+
+async function pridobiPrijavljeneTermine() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    prijavljeniTermini = [];
+    return;
+  }
+
+  try {
+    const odgovor = await fetch(`${API_URL}/prijave/moje/aktivnosti`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!odgovor.ok) {
+      prijavljeniTermini = [];
+      return;
+    }
+
+    const podatki = await odgovor.json();
+
+    prijavljeniTermini = podatki.map(function (a) {
+      return a.id_termin;
+    });
+
+  } catch (err) {
+    console.error(err);
+    prijavljeniTermini = [];
   }
 }
 
@@ -109,6 +144,7 @@ function renderActivities() {
       `;
     }
     const jeVseckan = vseckaniOrganizatorji.includes(a.organizatorId);
+    const jePrijavljen = prijavljeniTermini.includes(a.id);
 
     return `
     <article class="activity-card">
@@ -126,23 +162,57 @@ function renderActivities() {
         ${komentarHTML}
       </div>
       <div class="activity-buttons">
-        <button onclick="toggleJoin(this)" class="btn ${a.spots > 0 ? 'primary' : 'disabled'} small" ${a.spots === 0 ? 'disabled' : ''}>
-          ${a.spots > 0 ? 'Prijavi se' : 'Polno'}
+        <button onclick="toggleJoin(this, ${a.id})" class="btn ${jePrijavljen ? 'danger' : (a.spots > 0 ? 'primary' : 'disabled')} small" ${a.spots === 0 && !jePrijavljen ? 'disabled' : ''}>
+          ${jePrijavljen ? 'Odjavi se' : (a.spots > 0 ? 'Prijavi se' : 'Polno')}
         </button>
+   
       </div>
        <button onclick="toggleHeart(this, ${a.organizatorId})" class="heart-btn ${jeVseckan ? 'liked' : ''}">${jeVseckan ? '♥' : '♡'}</button>
     </article>`;}).join('') || '<p class="empty">Ni najdenih aktivnosti za izbrane filtre.</p>';
 }
 
-function toggleJoin(button) {
-  if (button.textContent === 'Prijavi se') {
-    button.textContent = 'Odjavi se';
-    button.classList.remove('primary');
-    button.classList.add('danger');
-  } else {
-    button.textContent = 'Prijavi se';
-    button.classList.remove('danger');
-    button.classList.add('primary');
+async function toggleJoin(button, terminId) {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert("Za prijavo na aktivnost se moraš najprej prijaviti.");
+    window.location.href = "prijava.html";
+    return;
+  }
+
+  if (!terminId) {
+    alert("Napaka: manjka ID termina.");
+    return;
+  }
+
+  const jeOdjava = button.textContent.trim() === "Odjavi se";
+
+  try {
+    const odgovor = await fetch(`${API_URL}/prijave/${terminId}`, {
+      method: jeOdjava ? "DELETE" : "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    const podatki = await odgovor.json();
+
+    if (!odgovor.ok) {
+      alert(podatki.napaka || "Prišlo je do napake.");
+      return;
+    }
+
+    alert(podatki.sporocilo);
+
+    await naloziAktivnosti(false);
+
+    if (document.getElementById("mojePrijavljeneAktivnosti")) {
+      await naloziMojePrijavljeneAktivnosti();
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Napaka pri povezavi s strežnikom.");
   }
 }
 

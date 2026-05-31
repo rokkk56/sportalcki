@@ -69,7 +69,8 @@ CREATE TABLE Uporabnik_Skupina (
 CREATE TABLE Uporabnik_Termin (
     id_Uporabnik_Termin SERIAL PRIMARY KEY,
     Uporabnikid_Uporabnik INTEGER REFERENCES Uporabnik(id_Uporabnik) ON DELETE CASCADE,
-    Terminid_Termin INTEGER REFERENCES Termin(id_Termin) ON DELETE CASCADE 
+    Terminid_Termin INTEGER REFERENCES Termin(id_Termin) ON DELETE CASCADE,
+    UNIQUE (Uporabnikid_Uporabnik, Terminid_Termin)
 );
 
 CREATE TABLE Termin_Skupina (
