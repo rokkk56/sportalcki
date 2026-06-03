@@ -46,6 +46,8 @@ async function naloziAktivnosti(redniTermini) {
         sport: a.sport || 'Aktivnost',
         venue: a.prizorisce || 'Neznano prizorišče',
         city: a.mesto || 'Neznano',
+        lat: a.lat,
+        lng: a.lng,
         date: izpisanDatum,
         time: izpisanaUra,
         spots: a.stevilomest !== undefined ? a.stevilomest : 0,
@@ -64,12 +66,13 @@ async function naloziAktivnosti(redniTermini) {
                 a.sport === 'Badminton' ? '🏸' : '🏃',
         org: a.organizatorime + ' ' + a.organizatorpriimek || 'Neznan organizator'
       };
-    });
+    })
 
     console.log(activities);
     await pridobiVseckaneIds();
     await pridobiPrijavljeneTermine();
     renderActivities();
+    prikaziAktivnostiNaZemljevidu(activities);
 
   } catch (napaka) {
     console.error("Ujeta napaka v aplikaciji:", napaka.message);
@@ -1603,3 +1606,73 @@ async function  handleGoogleLogin(response) {
 
   window.location.href = "profil.html";
 }
+
+//aktiven zemljevid
+let zemljevid = null;
+let markerji = [];
+
+function ikonaZaSport(sport) {
+  if (sport === "Nogomet") return "⚽";
+  if (sport === "Košarka") return "🏀";
+  if (sport === "Odbojka") return "🏐";
+  if (sport === "Tenis") return "🎾";
+  if (sport === "Badminton") return "🏸";
+  return "🏃";
+}
+
+function inicializirajZemljevid() {
+  const mapDiv = document.getElementById("map");
+
+  if (!mapDiv) return;
+
+  zemljevid = L.map("map").setView([46.1512, 14.9955], 8);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: "© OpenStreetMap"
+  }).addTo(zemljevid);
+}
+
+function prikaziAktivnostiNaZemljevidu(aktivnosti) {
+  if (!zemljevid) return;
+
+  markerji.forEach(marker => zemljevid.removeLayer(marker));
+  markerji = [];
+
+  aktivnosti.forEach(a => {
+    const lat = Number(a.lat);
+    const lng = Number(a.lng);
+
+    if (!lat || !lng) return;
+
+    const emoji = ikonaZaSport(a.sport);
+
+    const customIcon = L.divIcon({
+      html: `<div class="sport-marker">${emoji}</div>`,
+      className: "",
+      iconSize: [34, 34],
+      iconAnchor: [17, 17]
+    });
+
+    const marker = L.marker([lat, lng], {
+      icon: customIcon
+    }).addTo(zemljevid);
+
+    marker.bindPopup(`
+      <b>${a.title}</b><br>
+      ${a.sport}<br>
+      ${a.venue}, ${a.city}<br>
+      ${a.date} ob ${a.time}
+    `);
+
+    markerji.push(marker);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  inicializirajZemljevid();
+
+  if (document.getElementById("map")) {
+    await naloziAktivnosti(false);
+  }
+});
