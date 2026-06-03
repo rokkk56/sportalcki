@@ -266,3 +266,73 @@ FROM uporabnik u
 
 -- komentar slika
 ALTER TABLE Komentar ADD COLUMN slika TEXT NULL;
+
+--dodajanje kordinatov za vsa prizorisca
+ALTER TABLE Prizorisce
+    ADD COLUMN lat DECIMAL(10, 7),
+    ADD COLUMN lng DECIMAL(10, 7);
+
+UPDATE Prizorisce
+SET Lat = 46.0496900, Lng = 14.4697200
+WHERE Naziv = 'Športni center Jamova';
+
+UPDATE Prizorisce
+SET Lat = 45.5480600, Lng = 13.7301900
+WHERE Naziv = 'Igrišča ob morju';
+
+UPDATE Prizorisce
+SET Lat = 46.5546500, Lng = 15.6458800
+WHERE Naziv = 'Športni park Maribor';
+
+UPDATE Prizorisce
+SET Lat = 46.4352500, Lng = 14.0522100
+WHERE Naziv = 'Dvorana Podmežakla';
+
+UPDATE Prizorisce
+SET Lat = 46.0820600, Lng = 14.5208600
+WHERE Naziv = 'Dvorana Stožice';
+
+UPDATE Prizorisce
+SET Lat = 45.5283200, Lng = 13.5682900
+WHERE Naziv = 'Športni center Triton';
+
+UPDATE Prizorisce
+SET Lat = 46.4200500, Lng = 15.8701800
+WHERE Naziv = 'Dvorana Arena Kurent';
+
+UPDATE Prizorisce
+SET Lat = 46.6625100, Lng = 16.1663900
+WHERE Naziv = 'Rekreacijski center Panter';
+
+UPDATE Prizorisce
+SET Lat = 45.9564200, Lng = 13.6483700
+WHERE Naziv = 'Dvorana Spin';
+
+UPDATE Prizorisce
+SET Lat = 46.0510800, Lng = 14.5051300
+WHERE Naziv = 'Dvorana Zlati zmaj';
+
+UPDATE Prizorisce
+SET Lat = 46.2388700, Lng = 15.2672100
+WHERE Naziv = 'Atletski balon Sprint';
+
+UPDATE Prizorisce
+SET Lat = 45.5480600, Lng = 13.7301900
+WHERE Naziv = 'Teniški klub Breza';
+
+UPDATE Prizorisce
+SET Lat = 46.0569500, Lng = 14.5057500
+WHERE Naziv = 'Košarkarska dvorana Trojka';
+
+UPDATE Prizorisce
+SET Lat = 46.1550000, Lng = 15.0530000
+WHERE Naziv = 'Center Pick & Roll';
+
+UPDATE Prizorisce
+SET Lat = 46.4200500, Lng = 15.8701800
+WHERE Naziv = 'Tekaški studio Pace';
+SELECT
+    Naziv,
+    Lat,
+    Lng
+FROM Prizorisce;

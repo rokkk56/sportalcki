@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ŠportniPartner.si | Športalčki</title>
   <link rel="stylesheet" href="style.css" />
+  <link
+          rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
 </head>
 <body>
   <header class="navbar">
@@ -55,28 +59,22 @@
         <div>⚽ Nogomet</div><div>🏀 Košarka</div><div>🎾 Tenis</div><div>🏐 Odbojka</div><div>🏃 Tek</div><div>🏸 Badminton</div>
       </div>
     </section>
-    <section style="text-align:center; margin:40px 0;">
 
-      <h2>Zemljevid športnih aktivnosti</h2>
+    <section class="section">
+      <h2>🗺️ Aktivnosti po Sloveniji</h2>
 
-      <iframe
-              src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d1418158.202056993!2d15.317583476269524!3d46.03433625904008!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ssl!2ssi!4v1780145367673!5m2!1ssl!2ssi"
-              width="900"
-              height="500"
-              style="border:0;"
-              allowfullscreen=""
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade">
-      </iframe>
-
+      <div class="card">
+        <div id="map"></div>
+      </div>
     </section>
+
     <section class="section komentarji">
       <h2>Napiši komentar</h2>
 
       <form id="komentarForm" class="card">
         <textarea id="komentarInput" placeholder="Napiši komentar..." required></textarea>
         <button class="btn primary" type="submit">Pošlji komentar</button>
-        <p id=""komentarSporocilo></p>
+        <p id=komentarSporocilo"></p>
       </form>
 
       <div id="komentarji"></div>
@@ -84,6 +82,7 @@
   </main>
 
   <footer>© 2026 ŠportniPartner.si · Projektna ekipa Športalčki</footer>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
