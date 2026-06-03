@@ -132,7 +132,7 @@ function renderActivities() {
     (!available || a.spots > 0)
   );
   list.innerHTML = filtered.map((a, index) => {
-    let komentarHTML = '';
+  let komentarHTML = '';
     if (a.komentarTekst) {
       let slikaHTML = '';
       if (a.komentarSlika) {
@@ -188,9 +188,9 @@ function renderActivities() {
         ${dodajKomentarHTML}
       </div>
       <div class="activity-buttons">
-       <button onclick="toggleJoin(this, ${a.id})" class="btn ${jePrijavljen ? 'danger' : (a.spots > 0 ? 'primary' : 'disabled')} small" ${a.spots === 0 && !jePrijavljen ? 'disabled' : ''}>
-      ${jePrijavljen ? 'Odjavi se' : (a.spots > 0 ? 'Prijavi se' : 'Polno')}
-      </button>
+        <button onclick="toggleJoin(this, ${a.id})" class="btn ${jePrijavljen ? 'danger' : (a.spots > 0 ? 'primary' : 'disabled')} small" ${a.spots === 0 && !jePrijavljen ? 'disabled' : ''}>
+          ${jePrijavljen ? 'Odjavi se' : (a.spots > 0 ? 'Prijavi se' : 'Polno')}
+        </button>
    
       </div>
        <button onclick="toggleHeart(this, ${a.organizatorId})" class="heart-btn ${jeVseckan ? 'liked' : ''}">${jeVseckan ? '♥' : '♡'}</button>
@@ -255,7 +255,7 @@ async function toggleJoin(button, terminId) {
       await naloziMojePrijavljeneAktivnosti();
     }
 
-    prikaziSporociloNaStrani(podatki.sporocilo, "success");
+prikaziSporociloNaStrani(podatki.sporocilo, "success");
 
   } catch (err) {
     console.error(err);
@@ -583,12 +583,12 @@ async function toggleHeart(button, organizatorId) {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    const sporocilo = document.getElementById("organizatorSporocilo");
-    if (sporocilo) {
-      sporocilo.textContent = "Za všečkanje organizatorja se moraš prijaviti.";
-    }
-    return;
+  const sporocilo = document.getElementById("organizatorSporocilo");
+  if (sporocilo) {
+    sporocilo.textContent = "Za všečkanje organizatorja se moraš prijaviti.";
   }
+  return;
+}
 
   button.classList.toggle("liked");
   const jeVseckan = button.classList.contains("liked");
@@ -605,8 +605,8 @@ async function toggleHeart(button, organizatorId) {
         "Authorization": `Bearer ${token}`
       },
       body: jeVseckan
-        ? JSON.stringify({ organizatorId })
-        : null
+      ? JSON.stringify({ organizatorId })
+      : null
     }
   );
 }
@@ -620,28 +620,28 @@ async function pridobiVseckaneIds() {
   }
 
   try {
-    const odgovor = await fetch(`${API_URL}/organizatorji/vseckani`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
-
-    if (!odgovor.ok) {
-      vseckaniOrganizatorji = [];
-      return;
+  const odgovor = await fetch(`${API_URL}/organizatorji/vseckani`, {
+    headers: {
+      "Authorization": `Bearer ${token}`
     }
+  });
 
-    const podatki = await odgovor.json();
-
-    if (!Array.isArray(podatki)) {
-      vseckaniOrganizatorji = [];
-      return;
-    }
-
-    vseckaniOrganizatorji = podatki.map(o => o.id_uporabnik);
-  } catch (err) {
+  if (!odgovor.ok) {
     vseckaniOrganizatorji = [];
+    return;
   }
+
+  const podatki = await odgovor.json();
+
+  if (!Array.isArray(podatki)) {
+    vseckaniOrganizatorji = [];
+    return;
+  }
+
+  vseckaniOrganizatorji = podatki.map(o => o.id_uporabnik);
+} catch (err) {
+  vseckaniOrganizatorji = [];
+}
 }
 const dodajTerminForm = document.getElementById("activityForm");
 
@@ -1331,7 +1331,7 @@ if (registerForm) {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
-        },
+       },
         body: JSON.stringify({
           ime,
           priimek,
@@ -1393,7 +1393,7 @@ async function naloziProfil() {
   document.getElementById("profileInfo").innerHTML = `@${uporabnik.username}<br>${uporabnik.email} `;
   document.getElementById("profileAvatar").textContent = uporabnik.ime[0].toUpperCase();
 
-  if (uporabnik.profilnaslika) {
+   if (uporabnik.profilnaslika) {
     const img = document.getElementById("profileImage");
     const avatar = document.getElementById("profileAvatar");
 
@@ -1470,19 +1470,19 @@ if (editProfileForm) {
     const message = document.getElementById("editProfileMessage");
 
     const odgovor = await fetch(`${API_URL}/auth/me`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
 
-      body: JSON.stringify({
-        ime,
-        priimek,
-        username,
-        email,
-        password
-      })
+    body: JSON.stringify({
+      ime,
+      priimek,
+      username,
+      email,
+      password
+    })
     });
 
     const podatki = await odgovor.json();
