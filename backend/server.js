@@ -1,4 +1,4 @@
-const prijaveRoutes = require("./routes/prijaveRoutes");
+
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -10,6 +10,7 @@ const sportiRoutes = require("./routes/sportiRoutes");
 const redniTerminiRoutes = require("./routes/redniTerminiRoutes");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const prijaveRoutes = require("./routes/prijaveRoutes");
 
 const app = express();
 const port = 3000;

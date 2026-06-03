@@ -1,3 +1,15 @@
+//uvažanje knjižnice nodemailer
+const nodemailer = require('nodemailer');
+//konfiguracija za lasten mail -> prek katerega se pošiljajo obvestila drugim
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'masa.fras1@gmail.com',
+    //geslo
+    pass: 'uptvckpbuvlzqfbb'
+  }
+});
+
 const express = require("express");
 const router = express.Router();
 
@@ -103,6 +115,69 @@ router.post("/:terminId", preveriToken, async function (req, res) {
     );
 
     await client.query("COMMIT");
+
+    //pridobivanje podatkov za mail iz baze in pošiljanje obvestil
+    try {
+      const podatkiZaMail = await client.query(
+        `
+        SELECT 
+          u.Email, 
+          t.Naziv AS termin_naziv, 
+          t.Datum, 
+          p.Naziv AS prizorisce_naziv, 
+          p.Mesto, 
+          s.Naziv AS sport_naziv
+        FROM Uporabnik u
+        CROSS JOIN Termin t
+        LEFT JOIN Prizorisce p ON t.Prizorisceid_Prizorisce = p.id_Prizorisce
+        LEFT JOIN Sport s ON t.Sportid_Sport = s.id_Sport
+        WHERE u.id_Uporabnik = $1 AND t.id_Termin = $2
+        `,
+        [uporabnikId, terminId]
+
+      );
+      // Preverimo, če smo dobili podatke 
+      if (podatkiZaMail.rows.length > 0) {
+        const info = podatkiZaMail.rows[0];
+
+        //lepši zapis datuma in ure 
+        const dogodekDatum = new Date(info.datum).toLocaleDateString("sl-SI");
+        const dogodekUra = new Date(info.datum).toLocaleTimeString("sl-SI", { hour: "2-digit", minute: "2-digit" });
+
+        //vsebina e-maila
+        const mailOptions = {
+          from: '"ŠportniPartner.si" <masa.fras1@gmail.com>', 
+          to: info.email, // email uporabnika, ki se je prijavil
+          subject: `Potrditev prijave: ${info.termin_naziv || 'Športni termin'} ⚽`,
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #eee; padding: 20px; border-radius: 8px;">
+              <h2 style="color: #2c3e50; text-align: center;">Uspešna prijava na aktivnost!</h2>
+              <p>Živijo,</p>
+              <p>potrjujemo tvojo prijavo na termin za <strong>${info.sport_naziv || 'šport'}</strong>.</p>
+              <hr style="border: 0; border-top: 1px solid #eee;">
+              <h4 style="margin-bottom: 5px;">Podrobnosti termina:</h4>
+              <p style="margin: 5px 0;">🎯 <strong>Aktivnost:</strong> ${info.termin_naziv}</p>
+              <p style="margin: 5px 0;">🗓️ <strong>Datum in ura:</strong> ${dogodekDatum} ob ${dogodekUra}</p>
+              <p style="margin: 5px 0;">📍 <strong>Lokacija:</strong> ${info.prizorisce_naziv || 'Ni določeno'}, ${info.mesto || ''}</p>
+              <hr style="border: 0; border-top: 1px solid #eee;">
+              <p style="font-size: 0.9em; color: #555;">Če se termina ne moreš udeležiti, se pravočasno odjavi na spletni strani.</p>
+              <p style="margin-top: 20px;">Se vidimo na igrišču!<br><strong>Ekipa ŠportniPartner.si</strong></p>
+            </div>
+          `
+        };
+        //pošiljanje maila
+        transporter.sendMail(mailOptions, (error, infoOMailu) => {
+          if (error) {
+            console.error("Nodemailer napaka:", error);
+          } else {
+            console.log("Email uspešno poslan na: " + info.email);
+          }
+        });
+      }
+    } catch (mailErr) {
+      // če pride do napake pri pošiljanju, se ne sesuje ampak je up, še vedno prijavljen
+      console.error("Napaka pri pripravi maila:", mailErr);
+    }
 
     res.json({
       sporocilo: "Uspešno si se prijavil/a na aktivnost."

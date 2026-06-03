@@ -7,7 +7,7 @@
 ]; 
 */
 let activities = [];
-let vseckaniOrganizatorji =[];
+let vseckaniOrganizatorji = [];
 let prijavljeniTermini = [];
 
 async function naloziAktivnosti(redniTermini) {
@@ -132,7 +132,7 @@ function renderActivities() {
     (!available || a.spots > 0)
   );
   list.innerHTML = filtered.map((a, index) => {
-  let komentarHTML = '';
+    let komentarHTML = '';
     if (a.komentarTekst) {
       let slikaHTML = '';
       if (a.komentarSlika) {
@@ -154,7 +154,7 @@ function renderActivities() {
       `;
     }
     let dodajKomentarHTML = '';
-    if(prikazRednihTerminov){
+    if (prikazRednihTerminov) {
       dodajKomentarHTML = `
       <div class="feedback-box">
         <form id="redniKomentarForm-${a.id}" class="card" onsubmit="oddajRedniKomentar(event, ${a.id})">
@@ -188,13 +188,14 @@ function renderActivities() {
         ${dodajKomentarHTML}
       </div>
       <div class="activity-buttons">
-        <button onclick="toggleJoin(this, ${a.id})" class="btn ${jePrijavljen ? 'danger' : (a.spots > 0 ? 'primary' : 'disabled')} small" ${a.spots === 0 && !jePrijavljen ? 'disabled' : ''}>
-          ${jePrijavljen ? 'Odjavi se' : (a.spots > 0 ? 'Prijavi se' : 'Polno')}
-        </button>
+       <button onclick="toggleJoin(this, ${a.id})" class="btn ${jePrijavljen ? 'danger' : (a.spots > 0 ? 'primary' : 'disabled')} small" ${a.spots === 0 && !jePrijavljen ? 'disabled' : ''}>
+      ${jePrijavljen ? 'Odjavi se' : (a.spots > 0 ? 'Prijavi se' : 'Polno')}
+      </button>
    
       </div>
        <button onclick="toggleHeart(this, ${a.organizatorId})" class="heart-btn ${jeVseckan ? 'liked' : ''}">${jeVseckan ? '♥' : '♡'}</button>
-    </article>`;}).join('') || '<p class="empty">Ni najdenih aktivnosti za izbrane filtre.</p>';
+    </article>`;
+  }).join('') || '<p class="empty">Ni najdenih aktivnosti za izbrane filtre.</p>';
 }
 
 function prikaziSporociloNaStrani(besedilo, tip = "success") {
@@ -254,7 +255,7 @@ async function toggleJoin(button, terminId) {
       await naloziMojePrijavljeneAktivnosti();
     }
 
-prikaziSporociloNaStrani(podatki.sporocilo, "success");
+    prikaziSporociloNaStrani(podatki.sporocilo, "success");
 
   } catch (err) {
     console.error(err);
@@ -449,7 +450,7 @@ if (document.getElementById("adminActivityList")) {
 //nalozi komentarje
 async function naloziKomentarje() {
   const container = document.getElementById("komentarji");
-  if(!container) return;
+  if (!container) return;
 
   const odgovor = await fetch(`${API_URL}/komentarji`);
   const komentarji = await odgovor.json();
@@ -469,37 +470,37 @@ async function naloziKomentarje() {
 const komentarForm = document.getElementById("komentarForm");
 
 if (komentarForm) {
-  komentarForm.addEventListener("submit", async function(e) {
+  komentarForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const token = localStorage.getItem("token");
     const komentar = document.getElementById("komentarInput").value;
     const sporocilo = document.getElementById("komentarSporocilo");
 
-    if(!token){
-      sporocilo.textContent= "Za dodajanje komentarja se moraš prijaviti.";
+    if (!token) {
+      sporocilo.textContent = "Za dodajanje komentarja se moraš prijaviti.";
       return;
     }
 
     const odgovor = await fetch(`${API_URL}/komentarji`, {
       method: "POST",
-      headers : {
+      headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({
         komentar: komentar,
-        terminId : null,
+        terminId: null,
         slika: null
       })
     });
 
-    if(!odgovor.ok){
+    if (!odgovor.ok) {
       sporocilo.textContent = "Napaka pri dodajanju komentarja.";
       return;
     }
 
-    document.getElementById("komentarInput").value= "";
+    document.getElementById("komentarInput").value = "";
     sporocilo.textContent = "Komentar dodan.";
 
     naloziKomentarje();
@@ -510,18 +511,18 @@ naloziKomentarje();
 
 async function naloziMojeKomentarje() {
   const container = document.getElementById("mojiKomentarji");
-  if(!container) return;
+  if (!container) return;
 
   const token = localStorage.getItem("token");
 
-  if(!token){
+  if (!token) {
     container.innerHTML = "<p>Za ogled komentarjev se moraš prijaviti.</p>";
     return;
   }
 
   const odgovor = await fetch(`${API_URL}/komentarji/moji`, {
     headers: {
-      "Authorization" : `Bearer ${token}`
+      "Authorization": `Bearer ${token}`
     }
   });
 
@@ -529,7 +530,7 @@ async function naloziMojeKomentarje() {
 
   container.innerHTML = "";
 
-  komentarji.forEach(k =>{
+  komentarji.forEach(k => {
     container.innerHTML += `
     <div class="card">
       <p>${k.komentar}</p>
@@ -543,11 +544,11 @@ naloziMojeKomentarje();
 
 async function naloziVseckaneOrganizatorje() {
   const container = document.getElementById("vseckaniOrganizatorji");
-  if(!container) return;
+  if (!container) return;
 
   const token = localStorage.getItem("token");
 
-  if(!token){
+  if (!token) {
     container.innerHTML = "<p>Za ogled všečkanih organizatorjev se moraš prijaviti.</p>";
     return;
   }
@@ -563,7 +564,7 @@ async function naloziVseckaneOrganizatorje() {
   container.innerHTML = "";
 
   podatki.forEach(o => {
-    container.innerHTML +=`
+    container.innerHTML += `
     <div class="organizator-card">
       <b>${o.ime} ${o.priimek}</b>
       <p>@${o.username}</p>
@@ -578,23 +579,23 @@ async function naloziVseckaneOrganizatorje() {
 
 naloziVseckaneOrganizatorje();
 
-async function  toggleHeart(button, organizatorId) {
+async function toggleHeart(button, organizatorId) {
   const token = localStorage.getItem("token");
 
-  if(!token){
-  const sporocilo = document.getElementById("organizatorSporocilo");
-  if(sporocilo){
-    sporocilo.textContent = "Za všečkanje organizatorja se moraš prijaviti.";
+  if (!token) {
+    const sporocilo = document.getElementById("organizatorSporocilo");
+    if (sporocilo) {
+      sporocilo.textContent = "Za všečkanje organizatorja se moraš prijaviti.";
+    }
+    return;
   }
-  return;
-}
 
   button.classList.toggle("liked");
   const jeVseckan = button.classList.contains("liked");
 
   button.textContent = jeVseckan ? "♥" : "♡";
 
-  await fetch (jeVseckan
+  await fetch(jeVseckan
     ? `${API_URL}/organizatorji/vseckani` :
     `${API_URL}/organizatorji/vseckani/${organizatorId}`,
     {
@@ -604,8 +605,8 @@ async function  toggleHeart(button, organizatorId) {
         "Authorization": `Bearer ${token}`
       },
       body: jeVseckan
-      ? JSON.stringify({organizatorId})
-      : null
+        ? JSON.stringify({ organizatorId })
+        : null
     }
   );
 }
@@ -613,39 +614,39 @@ async function  toggleHeart(button, organizatorId) {
 async function pridobiVseckaneIds() {
   const token = localStorage.getItem("token");
 
-  if(!token) {
+  if (!token) {
     vseckaniOrganizatorji = [];
     return;
   }
 
-  try{
-  const odgovor = await fetch(`${API_URL}/organizatorji/vseckani`, {
-    headers: {
-      "Authorization" : `Bearer ${token}`
+  try {
+    const odgovor = await fetch(`${API_URL}/organizatorji/vseckani`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!odgovor.ok) {
+      vseckaniOrganizatorji = [];
+      return;
     }
-  });
 
-  if(!odgovor.ok){
+    const podatki = await odgovor.json();
+
+    if (!Array.isArray(podatki)) {
+      vseckaniOrganizatorji = [];
+      return;
+    }
+
+    vseckaniOrganizatorji = podatki.map(o => o.id_uporabnik);
+  } catch (err) {
     vseckaniOrganizatorji = [];
-    return;
   }
-
-  const podatki = await odgovor.json();
-
-  if(!Array.isArray(podatki)) {
-    vseckaniOrganizatorji = [];
-    return;
-  }
-
-  vseckaniOrganizatorji = podatki.map(o => o.id_uporabnik);
-}catch (err){
-  vseckaniOrganizatorji = [];
-}
 }
 const dodajTerminForm = document.getElementById("activityForm");
 
 if (dodajTerminForm) {
-  dodajTerminForm.addEventListener("submit", async function(e) {
+  dodajTerminForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const token = localStorage.getItem("token");
@@ -654,14 +655,14 @@ if (dodajTerminForm) {
     const sqlDateTime = `${dateInput} ${timeInput}:00`;
     const successMessage = document.getElementById("successMessage");
 
-    if(!token){
-      sporocilo.textContent= "Za objavo termina se moraš prijaviti.";
+    if (!token) {
+      sporocilo.textContent = "Za objavo termina se moraš prijaviti.";
       return;
     }
 
     const odgovor = await fetch(`${API_URL}/aktivnosti/dodaj`, {
       method: "POST",
-      headers : {
+      headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
       },
@@ -679,7 +680,7 @@ if (dodajTerminForm) {
       })
     });
 
-    if(!odgovor.ok){
+    if (!odgovor.ok) {
       console.log(odgovor.json())
       successMessage.textContent = "Napaka pri dodajanju aktivnosti.";
       successMessage.classList.remove('hidden');
@@ -1303,8 +1304,8 @@ function preveriGeslo(geslo) {
 
 const registerForm = document.getElementById("registerForm");
 
-if(registerForm) {
-  registerForm.addEventListener("submit", async function(e) {
+if (registerForm) {
+  registerForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const ime = document.getElementById("regIme").value;
@@ -1319,18 +1320,18 @@ if(registerForm) {
     message.textContent = "";
     message.classList.remove("success-message", "error-message");
 
-    if(!preveriGeslo(password)){
+    if (!preveriGeslo(password)) {
       message.textContent = "Geslo mora imeti 8 znakov in vsebovati število ali posebni znak.";
       message.classList.add("error-message");
       return;
     }
 
-    try{
-      const odgovor = await fetch (`${API_URL}/auth/register`, {
+    try {
+      const odgovor = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
-       },
+        },
         body: JSON.stringify({
           ime,
           priimek,
@@ -1344,7 +1345,7 @@ if(registerForm) {
 
       const podatki = await odgovor.json();
 
-      if(!odgovor.ok) {
+      if (!odgovor.ok) {
         message.textContent = podatki.napaka || "Registracija ni uspela.";
         message.classList.add("error-message");
         return;
@@ -1367,16 +1368,16 @@ if(registerForm) {
 //za nalaganje podatkov uporabnika na profil.html
 async function naloziProfil() {
   const profileName = document.getElementById("profileName");
-  if(!profileName) return;
+  if (!profileName) return;
 
   const token = localStorage.getItem("token");
 
-  if(!token) {
+  if (!token) {
     window.location.href = "prijava.html";
     return;
   }
 
-  const odgovor = await fetch(`${API_URL}/auth/me`,{
+  const odgovor = await fetch(`${API_URL}/auth/me`, {
     headers: {
       "Authorization": `Bearer ${token}`
     }
@@ -1391,7 +1392,7 @@ async function naloziProfil() {
   document.getElementById("profileInfo").innerHTML = `@${uporabnik.username}<br>${uporabnik.email} `;
   document.getElementById("profileAvatar").textContent = uporabnik.ime[0].toUpperCase();
 
-   if (uporabnik.profilnaslika) {
+  if (uporabnik.profilnaslika) {
     const img = document.getElementById("profileImage");
     const avatar = document.getElementById("profileAvatar");
 
@@ -1407,13 +1408,13 @@ naloziProfil();
 const profileImageInput = document.getElementById("profileImageInput");
 
 if (profileImageInput) {
-  profileImageInput.addEventListener("change", function() {
+  profileImageInput.addEventListener("change", function () {
     const file = profileImageInput.files[0];
-    if(!file) return;
+    if (!file) return;
 
     const reader = new FileReader();
 
-    reader.onload = async function(e) {
+    reader.onload = async function (e) {
       const token = localStorage.getItem("token");
 
       await fetch(`${API_URL}/auth/profilna-slika`, {
@@ -1456,8 +1457,8 @@ function prikaziRedneTermine() {
 //urejanje podatkov uporabnika
 const editProfileForm = document.getElementById("editProfileForm");
 
-if(editProfileForm) {
-  editProfileForm.addEventListener("submit", async function(e) {
+if (editProfileForm) {
+  editProfileForm.addEventListener("submit", async function (e) {
     e.preventDefault();
     const token = localStorage.getItem("token");
     const ime = document.getElementById("editIme").value;
@@ -1466,24 +1467,24 @@ if(editProfileForm) {
     const password = document.getElementById("editPassword").value;
     const message = document.getElementById("editProfileMessage");
 
-    const odgovor = await fetch(`${API_URL}/auth/me`,{
-    method : "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
-    },
+    const odgovor = await fetch(`${API_URL}/auth/me`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
 
-    body: JSON.stringify({
-      ime,
-      priimek,
-      email,
-      password
-    })
+      body: JSON.stringify({
+        ime,
+        priimek,
+        email,
+        password
+      })
     });
 
     const podatki = await odgovor.json();
 
-    if (!odgovor.ok){
+    if (!odgovor.ok) {
       message.textContent = podatki.napaka;
       message.className = "error-message";
       return;
