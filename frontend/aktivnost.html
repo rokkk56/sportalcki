@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <title>Podrobnosti aktivnosti</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="index.html">Domov</a>
+    <a href="aktivnosti.html">Aktivnosti</a>
+    <a href="objavi.html" id="objaviLink">Objavi oglas</a>
+    <a href="profil.html" id="profileLink">Moj profil</a>
+    <a href="admin.html" id="adminLink" class="hidden">Admin</a>
+    <a href="prijava.html" id="loginLink">Prijava</a>
+    <a href="#" id="logoutLink" onclick="odjava()" class="hidden">Odjava</a>
+  </nav>
+</header>
+
+<main class="container">
+  <section class="page-title">
+    <p class="badge">Podrobnosti aktivnosti</p>
+    <h1 id="aktivnostNaslov">Aktivnost</h1>
+  </section>
+
+  <section id="aktivnostPodrobnosti"></section>
+
+  <section class="card">
+    <h2>Komentarji</h2>
+    <div id="aktivnostKomentarji"></div>
+  </section>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

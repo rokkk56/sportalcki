@@ -175,7 +175,7 @@ function renderActivities() {
     const jePrijavljen = prijavljeniTermini.includes(a.id);
 
     return `
-    <article class="activity-card">
+    <article class="activity-card" onclick="odpriAktivnost(${a.id})">
       <div class="emoji">${a.emoji}</div>
       <div class="activity-info">
         <h2>${a.title} (${a.sport})</h2>
@@ -191,14 +191,21 @@ function renderActivities() {
         ${dodajKomentarHTML}
       </div>
       <div class="activity-buttons">
-        <button onclick="toggleJoin(this, ${a.id})" class="btn ${jePrijavljen ? 'danger' : (a.spots > 0 ? 'primary' : 'disabled')} small" ${a.spots === 0 && !jePrijavljen ? 'disabled' : ''}>
+        <button onclick="event.stopPropagation(); toggleJoin(this, ${a.id})" class="btn ${jePrijavljen ? 'danger' : (a.spots > 0 ? 'primary' : 'disabled')} small" ${a.spots === 0 && !jePrijavljen ? 'disabled' : ''}>
           ${jePrijavljen ? 'Odjavi se' : (a.spots > 0 ? 'Prijavi se' : 'Polno')}
         </button>
    
       </div>
-       <button onclick="toggleHeart(this, ${a.organizatorId})" class="heart-btn ${jeVseckan ? 'liked' : ''}">${jeVseckan ? '♥' : '♡'}</button>
+       <button onclick="event.stopPropagation(); toggleHeart(this, ${a.organizatorId})" class="heart-btn ${jeVseckan ? 'liked' : ''}">
+       ${jeVseckan ? '♥' : '♡'}
+       </button>
     </article>`;
   }).join('') || '<p class="empty">Ni najdenih aktivnosti za izbrane filtre.</p>';
+}
+
+//funkcija za prikaz ene aktivnosti 1.del
+function odpriAktivnost(id) {
+  window.location.href = `aktivnost.html?id=${id}`;
 }
 
 function prikaziSporociloNaStrani(besedilo, tip = "success") {
@@ -1672,7 +1679,108 @@ function prikaziAktivnostiNaZemljevidu(aktivnosti) {
 document.addEventListener("DOMContentLoaded", async () => {
   inicializirajZemljevid();
 
-  if (document.getElementById("map")) {
+  if (document.getElementById("activityList")) {
     await naloziAktivnosti(false);
   }
 });
+
+//funkcija za prikaz ene aktivnosti
+async function naloziPodrobnostiAktivnosti() {
+  const container = document.getElementById("aktivnostPodrobnosti");
+  const naslov = document.getElementById("aktivnostNaslov");
+
+  if (!container || !naslov) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  if (!id) {
+    container.innerHTML = `<p class="empty">Manjka ID aktivnosti.</p>`;
+    return;
+  }
+
+  try {
+    const odgovor = await fetch(`${API_URL}/aktivnosti/${id}`);
+    const a = await odgovor.json();
+
+    if (!odgovor.ok) {
+      container.innerHTML = `<p class="empty">${a.napaka || "Napaka pri nalaganju aktivnosti."}</p>`;
+      return;
+    }
+
+    const datum = new Date(a.datum).toLocaleDateString("sl-SI");
+    const ura = new Date(a.datum).toLocaleTimeString("sl-SI", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+    naslov.textContent = a.naziv;
+
+    container.innerHTML = `
+      <article class="activity-card">
+        <div class="emoji">${vrniIkonoSporta(a.sport)}</div>
+
+        <div class="activity-info">
+          <h2>${a.naziv} (${a.sport})</h2>
+          <p>
+            ${datum} ob ${ura} ·
+            <strong>Lokacija:</strong> ${a.prizorisce}, ${a.mesto} ·
+            <strong>Organizator:</strong> ${a.organizatorime || ""} ${a.organizatorpriimek || ""}
+          </p>
+
+          <p class="activity-desc" style="font-style: italic; color: #555; margin-top: 5px;">
+            ${a.opis || "Brez opisa"}
+          </p>
+
+          <div class="tags" style="margin-top: 10px;">
+            <span>${a.zahtevnost || ""}</span>
+            <span>${a.spol || ""}</span>
+            <span>${a.starostnaskupina || ""}</span>
+            <span>${a.stevilomest} prostih mest</span>
+          </div>
+        </div>
+      </article>
+    `;
+
+    await naloziKomentarjeAktivnosti(id);
+
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = `<p class="empty">Napaka pri povezavi s strežnikom.</p>`;
+  }
+}
+
+//funkcija za komentarje na eni strani aktivnosti
+async function naloziKomentarjeAktivnosti(terminId) {
+  const container = document.getElementById("aktivnostKomentarji");
+
+  if (!container) return;
+
+  try {
+    const odgovor = await fetch(`${API_URL}/komentarji/termin/${terminId}`);
+    const komentarji = await odgovor.json();
+
+    if (!odgovor.ok) {
+      container.innerHTML = `<p class="empty">${komentarji.napaka || "Napaka pri nalaganju komentarjev."}</p>`;
+      return;
+    }
+
+    if (komentarji.length === 0) {
+      container.innerHTML = `<p class="empty">Ta aktivnost še nima komentarjev.</p>`;
+      return;
+    }
+
+    container.innerHTML = komentarji.map(k => `
+      <div class="card">
+        <p><b>${k.ime} ${k.priimek}:</b> ${k.komentar}</p>
+        ${k.slika ? `<img src="${k.slika}" style="width:120px;height:120px;object-fit:cover;border-radius:8px;margin-top:8px;">` : ""}
+      </div>
+    `).join("");
+
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = `<p class="empty">Napaka pri povezavi s strežnikom.</p>`;
+  }
+}
+
+naloziPodrobnostiAktivnosti();

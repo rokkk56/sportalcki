@@ -20,9 +20,7 @@ router.get("/", async (req, res) => {
                 Prizorisce.Naziv AS Prizorisce,
                 Prizorisce.mesto,
                 Uporabnik.Ime AS OrganizatorIme,
-                Uporabnik.Priimek AS OrganizatorPriimek,
-                Prizorisce.lat,
-                Prizorisce.lng
+                Uporabnik.Priimek AS OrganizatorPriimek
             FROM Termin
             JOIN Sport
             ON Sportid_Sport = id_Sport
@@ -106,5 +104,54 @@ router.post("/dodaj", preveriToken, async (req,res) => {
     }
 });
 
-module.exports = router;
+//za prikaz ene aktivnosti
+router.get("/:id", async function (req, res) {
+  try {
+    const id = req.params.id;
 
+    const result = await pool.query(
+      `
+      SELECT 
+        Termin.id_Termin,
+        Termin.naziv,
+        Termin.datum,
+        Termin.stevilomest,
+        Termin.opis,
+        Termin.zahtevnost,
+        Termin.starostnaskupina,
+        Termin.spol,
+        Termin.Uporabnikid_Organizator AS organizator_id,
+        Sport.naziv AS sport,
+        Prizorisce.naziv AS prizorisce,
+        Prizorisce.mesto,
+        Uporabnik.ime AS organizatorime,
+        Uporabnik.priimek AS organizatorpriimek
+      FROM Termin
+      JOIN Sport
+        ON Termin.Sportid_Sport = Sport.id_Sport
+      JOIN Prizorisce
+        ON Termin.Prizorisceid_Prizorisce = Prizorisce.id_Prizorisce
+      JOIN Uporabnik
+        ON Termin.Uporabnikid_Organizator = Uporabnik.id_Uporabnik
+      WHERE Termin.id_Termin = $1
+      `,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        napaka: "Aktivnost ne obstaja."
+      });
+    }
+
+    res.json(result.rows[0]);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      napaka: "Napaka pri nalaganju aktivnosti."
+    });
+  }
+});
+
+module.exports = router;
