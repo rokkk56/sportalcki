@@ -701,3 +701,7 @@ footer {
   color: #b42318;
   border: 1px solid #f5b5b5;
 }
+
+.profile-form-hidden {
+  display: none !important;
+}

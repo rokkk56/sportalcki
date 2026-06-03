@@ -816,7 +816,7 @@ function urediNavbar() {
     loginLink.classList.add("hidden");
     logoutLink.classList.remove("hidden");
 
-    const tip = uporabnik.tip.toLowerCase().trim();
+    const tip = (uporabnik.tip || "Uporabnik").toLowerCase().trim();
 
     if (tip === "administrator") {
       adminLink.classList.remove("hidden");
@@ -1386,6 +1386,7 @@ async function naloziProfil() {
   const uporabnik = await odgovor.json();
   document.getElementById("editIme").value = uporabnik.ime;
   document.getElementById("editPriimek").value = uporabnik.priimek;
+  document.getElementById("editUsername").value = uporabnik.username;
   document.getElementById("editEmail").value = uporabnik.email;
 
   document.getElementById("profileName").textContent = `${uporabnik.ime} ${uporabnik.priimek}`;
@@ -1463,6 +1464,7 @@ if (editProfileForm) {
     const token = localStorage.getItem("token");
     const ime = document.getElementById("editIme").value;
     const priimek = document.getElementById("editPriimek").value;
+    const username = document.getElementById("editUsername").value;
     const email = document.getElementById("editEmail").value;
     const password = document.getElementById("editPassword").value;
     const message = document.getElementById("editProfileMessage");
@@ -1477,6 +1479,7 @@ if (editProfileForm) {
       body: JSON.stringify({
         ime,
         priimek,
+        username,
         email,
         password
       })
@@ -1559,4 +1562,44 @@ async function oddajRedniKomentar(e, activityId) {
     console.error("Omrežna napaka:", napaka);
     sporocilo.textContent = "Napaka na omrežju.";
   }
+}
+
+//prikazovanje za urejanje profila
+function prikaziUrediProfil() {
+  const forma = document.getElementById("editProfileForm");
+
+  if (!forma) return;
+
+  forma.classList.toggle("profile-form-hidden");
+}
+
+//prijava z google profilom
+async function  handleGoogleLogin(response) {
+  const odgovor = await fetch (`${API_URL}/auth/google`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      credential: response.credential
+    })
+  });
+
+  const podatki = await odgovor.json();
+
+  if(!odgovor.ok) {
+    const sporocilo = document.getElementById("loginMessage");
+
+    if(sporocilo) {
+      sporocilo.textContent = podatki.napaka || "Google prijava ni uspela.";
+      sporocilo.classList.remove("hidden");
+      sporocilo.classList.remove("success")
+      sporocilo.className = "error-message"
+    }
+    return;
+  }
+  localStorage.setItem("token", podatki.token);
+  localStorage.setItem("uporabnik", JSON.stringify(podatki.uporabnik));
+
+  window.location.href = "profil.html";
 }

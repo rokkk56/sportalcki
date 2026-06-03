@@ -4,6 +4,8 @@ const router = express.Router();
 
 const pool = require("../db");
 const { JWT_SECRET, preveriToken } = require("../middleware/authMiddleware");
+const { OAuth2Client } = require("google-auth-library");
+const googleClient = new OAuth2Client("611174763274-3nfnu9nnkqobtiv1pmtlvvvbgiupag35.apps.googleusercontent.com");
 
 router.post("/login", async (req, res) => {
     const { username, password } = req.body;
@@ -154,11 +156,12 @@ router.put("/me", preveriToken, async (req,res) =>{
         const {
             ime,
             priimek,
+            username,
             email,
             password
         } = req.body;
 
-        if (!ime || !priimek || !email){
+        if (!ime || !priimek || !username || !email){
             return res.status(400).json({
                 napaka: "Izpolni vsa obvezna polja."
             });
@@ -176,19 +179,21 @@ router.put("/me", preveriToken, async (req,res) =>{
             SET
                 Ime = $1,
                 Priimek = $2,
-                Email = $3,
-                Password = $4
-            WHERE id_Uporabnik = $5
-            `, [ime,priimek,email,password,uporabnikId]);
+                Username = $3,
+                Email = $4,
+                Password = $5
+            WHERE id_Uporabnik = $6
+            `, [ime,priimek,username,email,password,uporabnikId]);
         } else {
             await pool.query(`
             UPDATE Uporabnik
             SET
                 Ime = $1,
                 Priimek = $2,
-                Email = $3
-            WHERE id_Uporabnik = $4
-            `, [ime,priimek,email,uporabnikId]);
+                Username = $3,
+                Email = $4
+            WHERE id_Uporabnik = $5
+            `, [ime,priimek,username,email,uporabnikId]);
         }
         res.json({sporocilo:"Profil uspešno posodobljen"});
 
@@ -212,6 +217,59 @@ router.put("/profilna-slika", preveriToken, async(req,res) => {
         res.json({ sporocilo: "Profilna slika shranjena."});
     }catch (err) {
         res.status(500).json({napaka:err.message});
+    }
+});
+
+router.post("/google" ,async (req,res) => {
+    try{
+        const { credential } = req.body;
+        const ticket = await googleClient.verifyIdToken({
+            idToken: credential,
+            audience: "611174763274-3nfnu9nnkqobtiv1pmtlvvvbgiupag35.apps.googleusercontent.com"
+        });
+
+        const payload = ticket.getPayload();
+
+        const email = payload.email;
+        const ime = payload.given_name || payload.name;
+        const priimek = payload.family_name || "";
+        const username = email.split("@")[0];
+
+        let result = await pool.query(`
+            SELECT id_Uporabnik, Ime, Priimek, username, Email
+            FROM Uporabnik
+            WHERE Email = $1`,
+        [email]);
+
+        if(result.rows.length === 0) {
+            result = await pool.query(`
+                INSERT INTO Uporabnik
+                (Ime, Priimek, Username, Password, Email, TipUporabnikaid_TipUporabnika)
+                VALUES ($1,$2,$3,$4,$5,1)
+                RETURNING id_Uporabnik, Ime, Priimek, Username, Email`,
+            [ime, priimek, username, "GOOGLE_LOGIN",email]);
+        }
+
+        const uporabnik = result.rows[0];
+
+        const token = jwt.sign({
+            id:uporabnik.id_uporabnik,
+            username:uporabnik.username,
+            ime:uporabnik.ime,
+            priimek: uporabnik.priimek,
+            email: uporabnik.email,
+            tip: "Uporabnik"
+        }, JWT_SECRET, {expiresIn: "2h"});
+
+        res.json({
+            sporocilo: "Google prijava uspešna",
+            token,
+            uporabnik
+        });
+    }catch (err){
+        res.status(401).json({
+            napaka:"Google prijava ni uspela."
+        });
     }
 });
 

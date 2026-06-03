@@ -36,10 +36,13 @@
 
         <button class="btn danger" onclick="odjava()">Odjava</button><br>
         <hr style="margin-top: 10px; margin-bottom: 10px;">
-        <h3>Uredi profil</h3>
-          <form id="editProfileForm">
+        <button class="btn secondary" onclick="prikaziUrediProfil()">
+          Uredi Profil
+        </button>
+          <form id="editProfileForm" class="profile-form-hidden">
             <input id="editIme" type="text" placeholder="Ime">
             <input id="editPriimek" type="text" placeholder="Priimek">
+            <input id="editUsername" type="text" placeholder="Uporabniško ime">
             <input id="editEmail" type="email" placeholder="Email">
             <input id="editPassword" type="password" placeholder="Novo geslo">
             <button class="btn primary" type="submit">Shrani spremembe</button>
