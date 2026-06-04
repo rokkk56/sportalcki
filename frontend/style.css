@@ -731,3 +731,35 @@ footer {
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
 }
+.komentar-item {
+  background: white;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.2s ease;
+}
+
+.komentar-item:last-child {
+  border-bottom: none;
+}
+
+.komentar-item:hover {
+  background: #dbeafe;
+  transform: scale(1.01);
+}
+
+#komentarji {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.organizator-aktivnost {
+  display: block;
+  color: black;
+  text-decoration: none;
+  margin: 4px 0;
+}
+
+.organizator-aktivnost:hover {
+  text-decoration: underline;
+}

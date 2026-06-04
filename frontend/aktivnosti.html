@@ -89,7 +89,10 @@
   <footer>© 2026 ŠportniPartner.si · Projektna ekipa Športalčki</footer>
   <script src="script.js"></script>
   <script>
-    naloziAktivnosti(false);
-  </script>
+  const params = new URLSearchParams(window.location.search);
+  const jeRedni = params.get("redni") === "true";
+
+  naloziAktivnosti(jeRedni);
+</script>
 </body>
 </html>

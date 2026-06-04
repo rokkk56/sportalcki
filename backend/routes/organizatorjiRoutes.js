@@ -100,8 +100,10 @@ router.get("/vseckani", preveriToken, async(req,res) => {
                 COALESCE(
                     json_agg(
                         json_build_object(
+                            'id', Termin.id_Termin,
                             'naziv', Termin.naziv,
-                            'datum', Termin.Datum
+                            'datum', Termin.Datum,
+                            'redni', Termin.RedniTermin
                         )
                     ) FILTER (WHERE Termin.id_Termin IS NOT NULL),
                     '[]'

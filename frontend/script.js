@@ -12,6 +12,8 @@ let prijavljeniTermini = [];
 
 async function naloziAktivnosti(redniTermini) {
   try {
+    const params = new URLSearchParams(window.location.search);
+    const izbranaAktivnost = params.get("aktivnost");
     var odgovor = null;
 
     if (redniTermini == true) {
@@ -66,7 +68,13 @@ async function naloziAktivnosti(redniTermini) {
                 a.sport === 'Badminton' ? '🏸' : '🏃',
         org: a.organizatorime + ' ' + a.organizatorpriimek || 'Neznan organizator'
       };
-    })
+    });
+
+    if (izbranaAktivnost) {
+      activities = activities.filter(a =>
+      a.title.toLowerCase() === izbranaAktivnost.toLowerCase()
+      );
+    }
 
     console.log(activities);
     await pridobiVseckaneIds();
@@ -458,11 +466,13 @@ async function naloziKomentarje() {
   const odgovor = await fetch(`${API_URL}/komentarji`);
   const komentarji = await odgovor.json();
 
-  container.innerHTML = "";
+  container.innerHTML = `<div class="card" id="komentarjiCard"></div>`;
+
+  const card = document.getElementById("komentarjiCard");
 
   komentarji.forEach(k => {
-    container.innerHTML += `
-    <div class="card">
+    card.innerHTML += `
+    <div class="komentar-item">
       <p><b>${k.ime} ${k.priimek}:</b> ${k.komentar}</p>
       <small>${k.termin ? "Termin: " + k.termin : "Splošen komentar"}</small>
       </div>
@@ -573,7 +583,7 @@ async function naloziVseckaneOrganizatorje() {
       <p>@${o.username}</p>
       <div class="organizator-hover">
         <h4>Aktivnosti:</h4>
-        ${o.aktivnosti.length > 0 ? o.aktivnosti.map(a => `<p>${a.naziv}</p>`).join("")
+        ${o.aktivnosti.length > 0 ? o.aktivnosti.map(a => `<a href="aktivnosti.html?aktivnost=${encodeURIComponent(a.naziv)}${a.redni ? '&redni=true' : ''}" class="organizator-aktivnost">${a.naziv}</a>`).join("")
         : "<p>Ni aktivnosti.</p>"}
       </div>
     </div>`;
