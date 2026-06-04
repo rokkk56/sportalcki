@@ -25,8 +25,6 @@ router.get("/", async (req, res) => {
                 Komentator.Ime AS KomentatorIme,
                 Komentator.priimek AS KomentatorPriimek,
                 Komentar.Slika AS KomentarSlika
-                Prizorisce.lat,
-                Prizorisce.lng
             FROM Termin
             JOIN Sport
             ON Termin.Sportid_Sport = Sport.id_Sport

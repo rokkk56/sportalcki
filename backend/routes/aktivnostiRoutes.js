@@ -20,9 +20,7 @@ router.get("/", async (req, res) => {
                 Prizorisce.Naziv AS Prizorisce,
                 Prizorisce.mesto,
                 Uporabnik.Ime AS OrganizatorIme,
-                Uporabnik.Priimek AS OrganizatorPriimek,
-                Prizorisce.lat,
-                Prizorisce.lng
+                Uporabnik.Priimek AS OrganizatorPriimek
             FROM Termin
             JOIN Sport
             ON Sportid_Sport = id_Sport
