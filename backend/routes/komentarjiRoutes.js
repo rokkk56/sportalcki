@@ -63,36 +63,4 @@ router.get("/moji", preveriToken, async(req,res) => {
     }
 });
 
-//funkcija za prikaz ene aktivnosti
-router.get("/termin/:terminId", async function (req, res) {
-  try {
-    const terminId = req.params.terminId;
-
-    const result = await pool.query(
-      `
-      SELECT
-        Komentar.id_Komentar,
-        Komentar.komentar,
-        Uporabnik.ime,
-        Uporabnik.priimek,
-        Uporabnik.username
-      FROM Komentar
-      JOIN Uporabnik
-        ON Komentar.Uporabnikid_Uporabnik = Uporabnik.id_Uporabnik
-      WHERE Komentar.Terminid_Termin = $1
-      ORDER BY Komentar.id_Komentar DESC
-      `,
-      [terminId]
-    );
-
-    res.json(result.rows);
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({
-      napaka: "Napaka pri nalaganju komentarjev."
-    });
-  }
-});
-
 module.exports = router;
