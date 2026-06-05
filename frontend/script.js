@@ -164,21 +164,7 @@ function renderActivities() {
         </div>
       `;
     }
-    let dodajKomentarHTML = '';
-    if (prikazRednihTerminov) {
-      dodajKomentarHTML = `
-      <div class="feedback-box">
-        <form id="redniKomentarForm-${a.id}" class="card" onsubmit="oddajRedniKomentar(event, ${a.id})">
-          <textarea id="redniKomentarInput-${a.id}" placeholder="Napiši komentar..." required></textarea>
-        
-          <input type="file" id="redniKomentarImageInput-${a.id}" accept="image/*" style="margin-bottom:10px">
-        
-          <button class="btn primary" type="submit">Pošlji komentar</button>
-          <p id="redniKomentarSporocilo-${a.id}"></p>
-        </form>
-      </div>
-      `;
-    }
+   
     const jeVseckan = vseckaniOrganizatorji.includes(a.organizatorId);
     const jePrijavljen = prijavljeniTermini.includes(a.id);
 
@@ -186,7 +172,11 @@ function renderActivities() {
     <article class="activity-card">
       <div class="emoji">${a.emoji}</div>
       <div class="activity-info">
-        <h2>${a.title} (${a.sport})</h2>
+        <h2>
+          <a href="aktivnost.html?id=${a.id}&redni=${prikazRednihTerminov}" class="activity-title-link">
+          ${a.title} (${a.sport})
+          </a>
+        </h2>
         <p>${a.date} ob ${a.time} · <strong>Lokacija:</strong> ${a.venue}, ${a.city} · <strong>Organizator:</strong> ${a.org}</p>
         <p class="activity-desc" style="font-style: italic; color: #555; margin-top: 5px;">${a.description}</p>
         <div class="tags" style="margin-top: 10px;">
@@ -196,7 +186,6 @@ function renderActivities() {
           <span>${a.spots} prostih mest</span>
         </div>
         ${komentarHTML}
-        ${dodajKomentarHTML}
       </div>
       <div class="activity-buttons">
         <button onclick="toggleJoin(this, ${a.id})" class="btn ${jePrijavljen ? 'danger' : (a.spots > 0 ? 'primary' : 'disabled')} small" ${a.spots === 0 && !jePrijavljen ? 'disabled' : ''}>
@@ -1686,3 +1675,184 @@ document.addEventListener("DOMContentLoaded", async () => {
     await naloziAktivnosti(false);
   }
 });
+
+//funkcija za stran ko kliknesm na ime aktivnosti
+async function naloziPodrobnostiAktivnosti() {
+  const container = document.getElementById("aktivnostPodrobnosti");
+  const naslov = document.getElementById("aktivnostNaslov");
+
+  if (!container || !naslov) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  const jeRedniTermin = params.get("redni") === "true";
+
+  if (!id) {
+    container.innerHTML = `<p class="empty">Manjka ID aktivnosti.</p>`;
+    return;
+  }
+
+  try {
+    const odgovor = await fetch(`${API_URL}/aktivnosti/${id}`);
+    const a = await odgovor.json();
+
+    if (!odgovor.ok) {
+      container.innerHTML = `<p class="empty">${a.napaka || "Napaka pri nalaganju aktivnosti."}</p>`;
+      return;
+    }
+
+    const datum = new Date(a.datum).toLocaleDateString("sl-SI");
+    const ura = new Date(a.datum).toLocaleTimeString("sl-SI", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+    naslov.textContent = a.naziv;
+
+    container.innerHTML = `
+      <article class="activity-card">
+        <div class="emoji">${vrniIkonoSporta(a.sport)}</div>
+
+        <div class="activity-info">
+          <h2>${a.naziv} (${a.sport})</h2>
+
+          <p>
+            ${datum} ob ${ura} ·
+            <strong>Lokacija:</strong> ${a.prizorisce}, ${a.mesto} ·
+            <strong>Organizator:</strong> ${a.organizatorime || ""} ${a.organizatorpriimek || ""}
+          </p>
+
+          <p class="activity-desc" style="font-style: italic; color: #555; margin-top: 5px;">
+            ${a.opis || "Brez opisa"}
+          </p>
+
+          <div class="tags" style="margin-top: 10px;">
+            <span>${a.zahtevnost || ""}</span>
+            <span>${a.spol || ""}</span>
+            <span>${a.starostnaskupina || ""}</span>
+            <span>${a.stevilomest} prostih mest</span>
+          </div>
+        </div>
+      </article>
+    `;
+
+    if (jeRedniTermin) {
+      const sekcija = document.getElementById("redniKomentarjiSekcija");
+
+      if (sekcija) {
+        sekcija.classList.remove("hidden");
+      }
+
+      await naloziKomentarjeAktivnosti(id);
+      pripraviObrazecZaKomentar(id);
+    }
+
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = `<p class="empty">Napaka pri povezavi s strežnikom.</p>`;
+  }
+}
+
+async function naloziKomentarjeAktivnosti(terminId) {
+  const container = document.getElementById("aktivnostKomentarji");
+
+  if (!container) return;
+
+  try {
+    const odgovor = await fetch(`${API_URL}/komentarji/termin/${terminId}`);
+    const komentarji = await odgovor.json();
+
+    if (!odgovor.ok) {
+      container.innerHTML = `<p class="empty">${komentarji.napaka || "Napaka pri nalaganju komentarjev."}</p>`;
+      return;
+    }
+
+    if (komentarji.length === 0) {
+      container.innerHTML = `<p class="empty">Ta redni termin še nima komentarjev.</p>`;
+      return;
+    }
+
+    container.innerHTML = komentarji.map(k => `
+      <div class="card">
+        <p><b>${k.ime} ${k.priimek}:</b> ${k.komentar}</p>
+        ${k.slika ? `<img src="${k.slika}" style="width:120px;height:120px;object-fit:cover;border-radius:8px;margin-top:8px;">` : ""}
+      </div>
+    `).join("");
+
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = `<p class="empty">Napaka pri povezavi s strežnikom.</p>`;
+  }
+}
+
+function pripraviObrazecZaKomentar(terminId) {
+  const form = document.getElementById("podrobnostiKomentarForm");
+
+  if (!form) return;
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const token = localStorage.getItem("token");
+    const komentarInput = document.getElementById("podrobnostiKomentarInput");
+    const slikaInput = document.getElementById("podrobnostiKomentarSlika");
+    const sporocilo = document.getElementById("podrobnostiKomentarSporocilo");
+
+    if (!token) {
+      sporocilo.textContent = "Za dodajanje komentarja se moraš prijaviti.";
+      return;
+    }
+
+    let slikaTekst = null;
+
+    if (slikaInput && slikaInput.files && slikaInput.files[0]) {
+      slikaTekst = await pretvoriSlikoVBase64(slikaInput.files[0]);
+    }
+
+    const odgovor = await fetch(`${API_URL}/komentarji`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        komentar: komentarInput.value,
+        terminId: terminId,
+        slika: slikaTekst
+      })
+    });
+
+    if (!odgovor.ok) {
+      sporocilo.textContent = "Napaka pri dodajanju komentarja.";
+      return;
+    }
+
+    komentarInput.value = "";
+
+    if (slikaInput) {
+      slikaInput.value = "";
+    }
+
+    sporocilo.textContent = "Komentar uspešno dodan.";
+
+    await naloziKomentarjeAktivnosti(terminId);
+  });
+}
+
+function pretvoriSlikoVBase64(file) {
+  return new Promise(function (resolve, reject) {
+    const reader = new FileReader();
+
+    reader.onload = function () {
+      resolve(reader.result);
+    };
+
+    reader.onerror = function (error) {
+      reject(error);
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+naloziPodrobnostiAktivnosti();
