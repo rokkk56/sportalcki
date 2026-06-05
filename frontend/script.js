@@ -327,6 +327,50 @@ if (loginForm) {
   });
 }
 
+//funkcijo za prijavo/odjavo na podrobni strani
+async function toggleJoinNaPodrobnostih(button, terminId) {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    prikaziSporociloNaStrani("Za prijavo na aktivnost se moraš najprej prijaviti.", "error");
+    setTimeout(() => {
+      window.location.href = "prijava.html";
+    }, 1200);
+    return;
+  }
+
+  if (!terminId) {
+    prikaziSporociloNaStrani("Napaka: manjka ID termina.", "error");
+    return;
+  }
+
+  const jeOdjava = button.textContent.trim() === "Odjavi se";
+
+  try {
+    const odgovor = await fetch(`${API_URL}/prijave/${terminId}`, {
+      method: jeOdjava ? "DELETE" : "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    const podatki = await odgovor.json();
+
+    if (!odgovor.ok) {
+      prikaziSporociloNaStrani(podatki.napaka || "Prišlo je do napake.", "error");
+      return;
+    }
+
+    prikaziSporociloNaStrani(podatki.sporocilo, "success");
+
+    await naloziPodrobnostiAktivnosti();
+
+  } catch (err) {
+    console.error(err);
+    prikaziSporociloNaStrani("Napaka pri povezavi s strežnikom.", "error");
+  }
+}
+
 async function naloziAdminAktivnosti() {
   const adminList = document.getElementById("adminActivityList");
 
@@ -1676,7 +1720,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-//funkcija za stran ko kliknesm na ime aktivnosti
+//funkcija za stran ko kliknes na ime aktivnosti
 async function naloziPodrobnostiAktivnosti() {
   const container = document.getElementById("aktivnostPodrobnosti");
   const naslov = document.getElementById("aktivnostNaslov");
@@ -1709,6 +1753,12 @@ async function naloziPodrobnostiAktivnosti() {
 
     naslov.textContent = a.naziv;
 
+    await pridobiVseckaneIds();
+    await pridobiPrijavljeneTermine();
+
+    const jeVseckan = vseckaniOrganizatorji.includes(a.organizator_id);
+    const jePrijavljen = prijavljeniTermini.includes(a.id_termin);
+
     container.innerHTML = `
       <article class="activity-card">
         <div class="emoji">${vrniIkonoSporta(a.sport)}</div>
@@ -1733,6 +1783,16 @@ async function naloziPodrobnostiAktivnosti() {
             <span>${a.stevilomest} prostih mest</span>
           </div>
         </div>
+
+        <div class="activity-buttons">
+          <button onclick="toggleJoinNaPodrobnostih(this, ${a.id_termin})" class="btn ${jePrijavljen ? 'danger' : (a.stevilomest > 0 ? 'primary' : 'disabled')} small" ${a.stevilomest === 0 && !jePrijavljen ? 'disabled' : ''}>
+            ${jePrijavljen ? 'Odjavi se' : (a.stevilomest > 0 ? 'Prijavi se' : 'Polno')}
+          </button>
+        </div>
+
+        <button onclick="toggleHeart(this, ${a.organizator_id})" class="heart-btn ${jeVseckan ? 'liked' : ''}">
+          ${jeVseckan ? '♥' : '♡'}
+        </button>
       </article>
     `;
 
