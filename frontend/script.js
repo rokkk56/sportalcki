@@ -12,8 +12,6 @@ let prijavljeniTermini = [];
 
 async function naloziAktivnosti(redniTermini) {
   try {
-    const params = new URLSearchParams(window.location.search);
-    const izbranaAktivnost = params.get("aktivnost");
     var odgovor = null;
 
     if (redniTermini == true) {
@@ -69,12 +67,6 @@ async function naloziAktivnosti(redniTermini) {
         org: a.organizatorime + ' ' + a.organizatorpriimek || 'Neznan organizator'
       };
     });
-
-    if (izbranaAktivnost) {
-      activities = activities.filter(a =>
-      a.title.toLowerCase() === izbranaAktivnost.toLowerCase()
-      );
-    }
 
     console.log(activities);
     await pridobiVseckaneIds();
@@ -616,7 +608,7 @@ async function naloziVseckaneOrganizatorje() {
       <p>@${o.username}</p>
       <div class="organizator-hover">
         <h4>Aktivnosti:</h4>
-        ${o.aktivnosti.length > 0 ? o.aktivnosti.map(a => `<a href="aktivnosti.html?aktivnost=${encodeURIComponent(a.naziv)}${a.redni ? '&redni=true' : ''}" class="organizator-aktivnost">${a.naziv}</a>`).join("")
+        ${o.aktivnosti.length > 0 ? o.aktivnosti.map(a => `<a href="aktivnost.html?id=${a.id}&redni=${a.redni ? 'true' : 'false'}" class="organizator-aktivnost">${a.naziv}</a>`).join("")
         : "<p>Ni aktivnosti.</p>"}
       </div>
     </div>`;
