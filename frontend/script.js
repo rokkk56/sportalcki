@@ -1661,11 +1661,10 @@ function inicializirajZemljevid() {
   if (!mapDiv) return;
 
   zemljevid = L.map("map").setView([46.1512, 14.9955], 8);
-
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: "© OpenStreetMap"
-  }).addTo(zemljevid);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  maxZoom: 20,
+  attribution: '© OpenStreetMap contributors, © CARTO'
+}).addTo(zemljevid);
 }
 
 function prikaziAktivnostiNaZemljevidu(aktivnosti) {

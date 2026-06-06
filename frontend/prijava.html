@@ -7,26 +7,23 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
 <header class="navbar">
-    <div class="logo">
-        <span>Š</span> Športalčki
-    </div>
+  <a class="logo" href="index.html"><span><img src="Media/ikona.gif" alt="Logo"></span> ŠportniPartner.si</a>
+    <nav>
     <nav>
         <a href="index.html">Domov</a>
         <a href="aktivnosti.html">Aktivnosti</a>
         <a href="objavi.html">Objavi aktivnost</a>
-        <a href="prijava.html" id="loginLink">Prijava</a>
+        <a href="prijava.html" class="active" id="loginLink">Prijava</a>
         <a href="profil.html" id="profileLink" class="hidden">Profil</a>
         <a href="admin.html" id="adminLink" class="hidden">Administrator</a>
         <a href="#" id="logoutLink" class="hidden" onclick="odjava()">Odjava</a>
     </nav>
 </header>
 
-<main class="page narrow">
+<main class="prijava">
 
-    <section class="page-title">
-        <span class="badge">Prijava</span>
+    <section class="prijavabes">
         <h1>Prijavi se</h1>
         <p>
             Prijavi se kot uporabnik ali administrator.
@@ -65,9 +62,11 @@
 
 </main>
 
-<footer>
-    <p>© 2026 Športalčki | ŠportniPartner.si</p>
-</footer>
+ <footer>
+    <div class="footer">
+      <p>© 2026 <strong>ŠportniPartner.si</strong> · Projektna ekipa <span>Športalčki</span></p>
+      </div>
+    </footer>
 
 <script src="script.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>

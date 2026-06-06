@@ -10,20 +10,35 @@
 <body>
 
 <header class="navbar">
-  <a class="logo" href="index.html"><span>Š</span> ŠportniPartner.si</a>
-  <nav>
+  <a class="logo" href="index.html"><span><img src="Media/ikona.gif" alt="Logo"></span> ŠportniPartner.si</a>
+    <nav>
     <a href="index.html">Domov</a>
     <a href="aktivnosti.html">Aktivnosti</a>
-    <a href="objavi.html">Objavi aktivnost</a>
+    <a href="objavi.html" class="active">Objavi aktivnost</a>
     <a href="prijava.html" id="loginLink">Prijava</a>
     <a href="profil.html" id="profileLink" class="hidden">Profil</a>
     <a href="admin.html" id="adminLink" class="hidden">Administrator</a>
     <a href="#" id="logoutLink" class="hidden" onclick="odjava()">Odjava</a>
   </nav>
 </header>
+<div class="celotna-stran-razpored">
+
+  <div class="zunanji-stolpec-levi">
+    <div class="kvadrat-za-sliko1">
+      <img src="Media/kvadrat1.jpg" alt="slika">
+    </div>
+    <div class="kvadrat-za-sliko2">
+      <p><strong>V četrtek nam je zmanjkal igralec za odbojko. Oglas sem oddal v dveh minutah, čez pol ure pa se nam je že javil Matic. Top stran!</strong> </p>
+      <p><i>-Luka N, Celje</i></p>  
+    </div>
+    <div class="kvadrat-za-sliko6">
+     <img src="Media/kvadrat2.jpg" alt="slika">
+    </div>
+    
+  </div>
 
 <main class="page narrow">
-
+ <section class="main3">
   <section class="page-title">
     <span class="badge">Nov športni oglas</span>
     <h1>Objavi svojo aktivnost</h1>
@@ -34,9 +49,7 @@
   </section>
 
   <section class="card">
-
     <form class="form" id="activityForm">
-
       <div>
         <label for="naslov">Naslov aktivnosti</label>
         <input
@@ -159,19 +172,33 @@
         Objavi aktivnost
       </button>
 
-      <p id="successMessage" class="success hidden">
-        
-      </p>
-
-    </form>
+      <p id="successMessage" class="success hidden"></p>
+      </form>
+      </section>
 
   </section>
 
 </main>
+<div class="zunanji-stolpec-desni">
+    <div class="kvadrat-za-sliko3">
+     <p><strong>Preselila sem se v Novo mesto in nisem poznala nikogar za tenis. Preko te strani sem takoj našla super ekipo. Res imenitna platforma!</strong> </p>
+      <p><i>-Maja M., Ljubljana</i></p>  </div>
+    <div class="kvadrat-za-sliko4">
+      <img src="Media/kvadrat3.jpg" alt="slika">
+      
+    </div>
+    <div class="kvadrat-za-sliko5">
+      <p><strong>Kdor si je to izmislil, je genij. Stran je pregledna in celo ekipo za fuzbal smo zbrali v manj kot eni uri. Kapo dol Športalčkom!</strong> </p>
+      <p><i>-Anže T, Maribor</i></p>  
+    </div>
+  </div>
+</div>
 
-<footer>
-  <p>© 2026 Športalčki | ŠportniPartner.si</p>
-</footer>
+ <footer>
+    <div class="footer">
+      <p>© 2026 <strong>ŠportniPartner.si</strong> · Projektna ekipa <span>Športalčki</span></p>
+      </div>
+    </footer>
 
 <script src="script.js"></script>
 </body>

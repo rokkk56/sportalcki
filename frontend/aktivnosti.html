@@ -8,10 +8,11 @@
 </head>
 <body>
   <header class="navbar">
-    <a class="logo" href="index.html"><span>Š</span> ŠportniPartner.si</a>
+    <a class="logo" href="index.html"><span><img src="Media/ikona.gif" alt="Logo"></span> ŠportniPartner.si</a>
+    <nav>
     <nav>
       <a href="index.html">Domov</a>
-      <a href="aktivnosti.html">Aktivnosti</a>
+      <a href="aktivnosti.html" class="active">Aktivnosti</a>
       <a href="objavi.html">Objavi aktivnost</a>
       <a href="prijava.html" id="loginLink">Prijava</a>
       <a href="profil.html" id="profileLink" class="hidden">Profil</a>
@@ -20,7 +21,8 @@
     </nav>
   </header>
 
-  <main class="page">
+  <main class="main">
+    <div class="main2">
     <section class="page-title">
       <p class="badge">Iskanje aktivnosti</p>
       
@@ -84,9 +86,14 @@
 
     <div id="pageMessage"></div>
     <section id="activityList" class="activity-list"></section>
+    </div>
   </main>
 
-  <footer>© 2026 ŠportniPartner.si · Projektna ekipa Športalčki</footer>
+   <footer>
+    <div class="footer">
+      <p>© 2026 <strong>ŠportniPartner.si</strong> · Projektna ekipa <span>Športalčki</span></p>
+      </div>
+    </footer>
   <script src="script.js"></script>
   <script>
   naloziAktivnosti(false);

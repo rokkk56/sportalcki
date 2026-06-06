@@ -12,9 +12,9 @@
 </head>
 <body>
   <header class="navbar">
-    <a class="logo" href="index.html"><span>Š</span> ŠportniPartner.si</a>
+    <a class="logo" href="index.html"><span><img src="Media/ikona.gif" alt="Logo"></span> ŠportniPartner.si</a>
     <nav>
-      <a href="index.html">Domov</a>
+      <a href="index.html" class="active">Domov</a>
       <a href="aktivnosti.html">Aktivnosti</a>
       <a href="objavi.html">Objavi aktivnost</a>
       <a href="prijava.html" id="loginLink">Prijava</a>
@@ -28,8 +28,11 @@
     <section class="hero">
       <div class="hero-text">
         <p class="badge">Ekipa Športalčki</p>
+        <div class = "naslov">
         <h1>Najdi družbo za šport v svoji bližini.</h1>
-        <p>Objavi, da greš igrat odbojko, košarko, tenis ali nogomet, in hitro poišči ljudi, ki bi se ti pridružili.</p>
+        <p>Objavi, da greš igrat odbojko, košarko, tenis ali nogomet, in hitro poišči ljudi, ki bi se ti pridružili.
+          </div>
+        </p>
         <div class="hero-buttons">
           <a class="btn primary" href="objavi.html">Objavi aktivnost</a>
           <a class="btn secondary" href="aktivnosti.html">Poišči aktivnost</a>
@@ -44,6 +47,9 @@
       </div>
     </section>
 
+    <section class="main">
+
+    <section class="main2">
     <section class="section">
       <h2>Kako deluje?</h2>
       <div class="steps">
@@ -52,14 +58,29 @@
         <article><span>3</span><h3>Športaj skupaj</h3><p>Po aktivnosti lahko oceniš organizatorja in napišeš komentar.</p></article>
       </div>
     </section>
-
+    </section>
+    <section class="main2">
     <section class="section sports-preview">
       <h2>Najbolj iskani športi</h2>
       <div class="sport-grid">
-        <div>⚽ Nogomet</div><div>🏀 Košarka</div><div>🎾 Tenis</div><div>🏐 Odbojka</div><div>🏃 Tek</div><div>🏸 Badminton</div>
+        <div class="sport-grid-nogomet"><img src="Media/nogomet.gif" alt="Logo"><span>Nogomet</span>
+        </div>
+        <div class="sport-grid-kosarka"><img src="Media/kosarka.gif" alt="Logo"><span>Košarka</span>
+        </div>
+        <div class="sport-grid-tenis"><img src="Media/tenis.gif" alt="Logo"><span>Tenis</span>
+        </div>
+        <div class="sport-grid-odbojka"><img src="Media/odbojka.gif" alt="Logo"><span>Odbojka</span>
+          </div>
+        <div class="sport-grid-tek"><img src="Media/tek.gif" alt="Logo"><span>Tek</span>
+          </div>
+        <div class="sport-grid-badminton"><img src="Media/badminton.gif" alt="Logo"><span>Badminton</span>
+          </div>
       </div>
+        
+    </section>
     </section>
 
+    <section class="main2">
     <section class="section">
       <h2>🗺️ Aktivnosti po Sloveniji</h2>
 
@@ -67,7 +88,9 @@
         <div id="map"></div>
       </div>
     </section>
+    </section>
 
+    <section class="main2">
     <section class="section komentarji">
       <h2>Napiši komentar</h2>
 
@@ -79,9 +102,16 @@
 
       <div id="komentarji"></div>
     </section>
+
+    </section>
   </main>
 
-  <footer>© 2026 ŠportniPartner.si · Projektna ekipa Športalčki</footer>
+
+  <footer>
+    <div class="footer">
+      <p>© 2026 <strong>ŠportniPartner.si</strong> · Projektna ekipa <span>Športalčki</span></p>
+      </div>
+    </footer>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="script.js"></script>
 </body>
