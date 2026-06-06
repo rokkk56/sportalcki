@@ -6,6 +6,18 @@
   { sport:'Tek', city:'Velenje', date:'Danes', time:'19:00', spots:0, level:'Začetnik', gender:'Mešano', age:'18-30', emoji:'🏃', org:'Jan' }
 ]; 
 */
+function nastaviFilterIzURL() {
+  const params = new URLSearchParams(window.location.search);
+  const sportIzURL = params.get("sport");
+
+  if (!sportIzURL) return;
+
+  const sportSelect = document.getElementById("sport");
+
+  if (sportSelect) {
+    sportSelect.value = sportIzURL;
+  }
+}
 let activities = [];
 let vseckaniOrganizatorji = [];
 let prijavljeniTermini = [];
@@ -71,6 +83,7 @@ async function naloziAktivnosti(redniTermini) {
     console.log(activities);
     await pridobiVseckaneIds();
     await pridobiPrijavljeneTermine();
+    nastaviFilterIzURL();
     renderActivities();
     prikaziAktivnostiNaZemljevidu(activities);
 
@@ -161,7 +174,7 @@ function renderActivities() {
     const jePrijavljen = prijavljeniTermini.includes(a.id);
 
     return `
-    <article class="activity-card">
+    <article class="activity-card" id="termin-${a.id}">
       <div class="emoji">${a.emoji}</div>
       <div class="activity-info">
         <h2>
@@ -189,7 +202,26 @@ function renderActivities() {
     </article>`;
   }).join('') || '<p class="empty">Ni najdenih aktivnosti za izbrane filtre.</p>';
 }
+const hash = window.location.hash;
 
+if (hash) {
+  setTimeout(() => {
+    const element = document.querySelector(hash);
+
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+      element.classList.add("highlight-activity");
+
+      setTimeout(() => {
+        element.classList.remove("highlight-activity");
+      }, 2500);
+    }
+  }, 300);
+}
 function prikaziSporociloNaStrani(besedilo, tip = "success") {
   let container = document.getElementById("toastMessage");
 
@@ -1641,6 +1673,51 @@ async function  handleGoogleLogin(response) {
 
   window.location.href = "profil.html";
 }
+//zemljevid
+async function naloziVseAktivnostiZaZemljevid() {
+  if (!document.getElementById("map")) return;
+
+  try {
+    const odgovorAktivnosti = await fetch(`${API_URL}/aktivnosti`);
+    const odgovorRedni = await fetch(`${API_URL}/redniTermini`);
+
+    const aktivnosti = await odgovorAktivnosti.json();
+    const redniTermini = await odgovorRedni.json();
+
+    const vsiPodatki = [...aktivnosti, ...redniTermini];
+
+    const aktivnostiZaMapo = vsiPodatki.map(a => {
+      let izpisanDatum = "Neznano";
+      let izpisanaUra = "Neznano";
+
+      if (a.datum) {
+        const d = new Date(a.datum);
+        izpisanDatum = d.toLocaleDateString("sl-SI");
+        izpisanaUra = d.toLocaleTimeString("sl-SI", {
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      }
+
+      return {
+        id: a.id_termin,
+        title: a.naziv || "Brez naziva",
+        sport: a.sport || "Aktivnost",
+        venue: a.prizorisce || "Neznano prizorišče",
+        city: a.mesto || "Neznano",
+        lat: a.lat,
+        lng: a.lng,
+        date: izpisanDatum,
+        time: izpisanaUra
+      };
+    });
+
+    prikaziAktivnostiNaZemljevidu(aktivnostiZaMapo);
+
+  } catch (err) {
+    console.error("Napaka pri nalaganju zemljevida:", err);
+  }
+}
 
 //aktiven zemljevid
 let zemljevid = null;
@@ -1693,11 +1770,17 @@ function prikaziAktivnostiNaZemljevidu(aktivnosti) {
     }).addTo(zemljevid);
 
     marker.bindPopup(`
-      <b>${a.title}</b><br>
-      ${a.sport}<br>
-      ${a.venue}, ${a.city}<br>
-      ${a.date} ob ${a.time}
-    `);
+  <div class="map-popup">
+    <h3>${emoji} ${a.title}</h3>
+    <p>${a.sport}</p>
+    <p>${a.venue}, ${a.city}</p>
+    <p>${a.date} ob ${a.time}</p>
+
+    <a class="btn primary small" href="aktivnosti.html#termin-${a.id}">
+      Poglej aktivnost
+    </a>
+  </div>
+`);
 
     markerji.push(marker);
   });
@@ -1707,7 +1790,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   inicializirajZemljevid();
 
   if (document.getElementById("map")) {
-    await naloziAktivnosti(false);
+    await naloziVseAktivnostiZaZemljevid();
   }
 });
 

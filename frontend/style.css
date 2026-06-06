@@ -354,7 +354,8 @@ nav a:hover {
   gap: 16px;
 }
 
-.sport-grid div {
+.sport-grid div,
+.sport-grid a {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -363,7 +364,7 @@ nav a:hover {
   gap: 20px;
   background: white;
   border-radius: 18px;
-  padding: 4Opx 20px;
+  padding: 40px 20px;
   text-align: center;
   align-items: center;
   justify-content: center;
@@ -375,7 +376,7 @@ nav a:hover {
   overflow: hidden;
   z-index: 1;
   color: rgba(0, 54, 49);
-  text-shadow:whitesmoke;
+  text-shadow:var(--stranskiText);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -898,7 +899,7 @@ position: relative;
 #map {
   width: 100%;
   height: 500px;
-  border-radius: var(--radius);
+  border-radius: var(--zaobljenost);
   overflow: hidden;
   border: none;
   box-shadow: var(--shadow);
@@ -1072,7 +1073,7 @@ footer p span {
 }
 .prijavabes {
   text-align: center;
-  color: (var(--primary-dark));
+  color:var(--primary-dark);
   margin: 0 auto 20px auto;
 }
 
@@ -1126,7 +1127,7 @@ footer p span {
   padding-top: 30px;
 }
 .kvadrat-za-sliko1 p, .kvadrat-za-sliko3 p{
-  color: (--primary);
+  color:var(--primary);
 }
 .kvadrat-za-sliko1 img, 
 .kvadrat-za-sliko4 img, 
