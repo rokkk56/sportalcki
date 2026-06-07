@@ -347,21 +347,14 @@ nav a:hover {
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
-.sport-grid {
+.sport-grid-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 16px;
 }
-
-.sport-grid div,
-.sport-grid a {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+.sport-link {
   display: flex;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
+  flex-direction: column; 
   background: white;
   border-radius: 18px;
   padding: 40px 20px;
@@ -376,32 +369,37 @@ nav a:hover {
   overflow: hidden;
   z-index: 1;
   color: rgba(0, 54, 49);
-  text-shadow:var(--stranskiText);
+  text-shadow: var(--stranskiText);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none; 
 }
-
-.sport-grid div img {
+.sport-link div {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sport-link div img {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; 
   object-position: center;
   z-index: 1;
 }
-.sport-grid div span {
+.sport-link div span {
   position: relative;
   z-index: 2; 
   pointer-events: none; 
 }
-
-.sport-grid div:hover {
+.sport-link:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15);
   cursor: pointer;
 }
-
 .page-title {
   margin-bottom: 30px;
 }
@@ -589,7 +587,7 @@ footer {
   }
 
   .steps,
-  .sport-grid {
+  .sport-grid-container {
     grid-template-columns: 1fr 1fr;
   }
 
@@ -622,7 +620,7 @@ footer {
   }
 
   .steps,
-  .sport-grid,
+  .sport-grid-container,
   .filters,
   .two {
     grid-template-columns: 1fr;
@@ -1133,7 +1131,7 @@ footer p span {
   padding-top: 30px;
 }
 .kvadrat-za-sliko1 p, .kvadrat-za-sliko3 p{
-  color:var(--primary);
+  color:var(--primary-dark);
 }
 .kvadrat-za-sliko1 img, 
 .kvadrat-za-sliko4 img, 
