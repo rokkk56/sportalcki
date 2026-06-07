@@ -920,6 +920,12 @@ position: relative;
   transform: scale(1.01);
 }
 
+.komentarji-card {
+  padding: 0;
+  overflow: hidden;
+  margin-top: 16px;
+}
+
 #komentarji {
   background: white;
   border-radius: 20px;

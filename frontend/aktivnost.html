@@ -20,29 +20,33 @@
     </nav>
   </header>
 
-  <main class="page-aktivnost">
-    <section class="page-title">
-      <p class="badge">Podrobnosti aktivnosti</p>
-      <h1 id="aktivnostNaslov">Aktivnost</h1>
-    </section>
+  <main class="main">
+    <div class="main2">
+      <section class="page-title">
+        <p class="badge">Podrobnosti aktivnosti</p>
+        <h1 id="aktivnostNaslov">Aktivnost</h1>
+      </section>
 
-    <section id="aktivnostPodrobnosti"></section>
+      <section id="aktivnostPodrobnosti"></section><br>
 
-    <section id="redniKomentarjiSekcija" class="card hidden">
-      <h2>Komentarji</h2>
+      <section id="redniKomentarjiSekcija" class="card hidden">
+        <h2>Komentarji</h2>
 
-      <div id="aktivnostKomentarji"></div>
+        <div class="card komentarji-card">
+          <div id="aktivnostKomentarji"></div>
+        </div>
 
-      <form id="podrobnostiKomentarForm" class="card" style="margin-top: 20px;">
-        <textarea id="podrobnostiKomentarInput" placeholder="Napiši komentar..." required></textarea>
+          <form id="podrobnostiKomentarForm" class="card" style="margin-top: 20px;">
+          <textarea id="podrobnostiKomentarInput" placeholder="Napiši komentar..." required></textarea>
 
-        <input type="file" id="podrobnostiKomentarSlika" accept="image/*" style="margin-bottom:10px">
+          <input type="file" id="podrobnostiKomentarSlika" accept="image/*" style="margin-bottom:10px">
 
-        <button class="btn primary" type="submit">Pošlji komentar</button>
+          <button class="btn primary" type="submit">Pošlji komentar</button>
 
-        <p id="podrobnostiKomentarSporocilo"></p>
-      </form>
-    </section>
+          <p id="podrobnostiKomentarSporocilo"></p>
+        </form>
+      </section>
+    </div>
   </main>
   <footer>
     <div class="footer">

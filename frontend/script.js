@@ -1907,7 +1907,7 @@ async function naloziKomentarjeAktivnosti(terminId) {
     }
 
     container.innerHTML = komentarji.map(k => `
-      <div class="card">
+      <div class="komentar-item">
         <p><b>${k.ime} ${k.priimek}:</b> ${k.komentar}</p>
         ${k.slika ? `<img src="${k.slika}" style="width:120px;height:120px;object-fit:cover;border-radius:8px;margin-top:8px;">` : ""}
       </div>
