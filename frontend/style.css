@@ -771,7 +771,7 @@ position: relative;
   position: relative;
   padding: 14px;
   border-radius: 12px;
-  background: #f8fafc;
+  background: #384737;
   margin-bottom: 12px;
   cursor: pointer;
 }
@@ -782,7 +782,7 @@ position: relative;
   top: 100%;
   left: 0;
   width: 260px;
-  background: white;
+  background: #637560;
   border-radius: 12px;
   padding: 14px;
   box-shadow: 0 4px 14px rgba(0,0,0,0.15);
@@ -1329,4 +1329,133 @@ body.stran-profil {
     margin-bottom: 12px;
     font-size: 0.85rem;
     font-weight: 500;
+}
+
+.stran-profil .page {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.stran-profil .profile-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.profile-main-card {
+  min-height: 520px;
+}
+
+.profile-sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.profile-dashboard-card {
+  min-height: 430px;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-dashboard-card h2,
+.profile-main-card h1 {
+  margin-bottom: 16px;
+}
+
+.profile-scroll-area {
+  flex: 1;
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.profile-main-card .profile-scroll-area {
+  max-height: 430px;
+}
+
+.profile-scroll-area::-webkit-scrollbar {
+  width: 8px;
+}
+
+.profile-scroll-area::-webkit-scrollbar-track {
+  background: #e2e8f0;
+  border-radius: 999px;
+}
+
+.profile-scroll-area::-webkit-scrollbar-thumb {
+  background: #2563eb;
+  border-radius: 999px;
+}
+
+.stran-profil .activity-card {
+  grid-template-columns: auto 1fr;
+  align-items: flex-start;
+}
+
+.stran-profil .activity-card h2 {
+  font-size: 19px;
+}
+
+.stran-profil .activity-card p {
+  font-size: 14px;
+}
+
+#mojiKomentarji .card,
+#vseckaniOrganizatorji .organizator-card,
+#mojePrijavljeneAktivnosti .activity-card,
+#mojeAktivnosti .activity-card {
+  margin-bottom: 14px;
+}
+
+@media (max-width: 950px) {
+  .stran-profil .profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-sections {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-scroll-area,
+  .profile-main-card .profile-scroll-area {
+    max-height: none;
+  }
+}
+
+.accordion-card {
+  margin-top: 20px;
+}
+
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  cursor: pointer;
+  user-select: none;
+}
+
+.accordion-header h2 {
+  margin: 0;
+}
+
+.accordion-header span {
+  font-size: 22px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+
+.accordion-content.active {
+  max-height: 1000px;
+  overflow: visible;
+  margin-top: 20px;
 }

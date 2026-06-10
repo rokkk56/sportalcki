@@ -21,55 +21,100 @@
   </header>
 
   <main class="page">
+
     <section class="profile-grid">
+
       <aside class="card profile-card">
         <div class="profile-image-wrapper" onclick="document.getElementById('profileImageInput').click()">
-        <img id="profileImage" class="profile-img" alt="Profilna slika">
-        <div class="avatar" id="profileAvatar">?</div>
+          <img id="profileImage" class="profile-img" alt="Profilna slika">
+          <div class="avatar" id="profileAvatar">?</div>
         </div>
 
         <input type="file" id="profileImageInput" accept="image/*" hidden>
-        <small>Izberi profilno sliko</small>
-        <h2 id="profileName">Ime uporabnika</h2>
 
+        <small>Izberi profilno sliko</small>
+
+        <h2 id="profileName">Ime uporabnika</h2>
         <p id="profileInfo">Podatki uporabnika</p>
 
-        <button class="btn danger" onclick="odjava()">Odjava</button><br>
+        <button class="btn danger" onclick="odjava()">Odjava</button>
+
         <hr style="margin-top: 10px; margin-bottom: 10px;">
+
         <button class="btn secondary" onclick="prikaziUrediProfil()">
-          Uredi Profil
+          Uredi profil
         </button>
-          <form id="editProfileForm" class="profile-form-hidden">
-            <input id="editIme" type="text" placeholder="Ime">
-            <input id="editPriimek" type="text" placeholder="Priimek">
-            <input id="editUsername" type="text" placeholder="Uporabniško ime">
-            <input id="editEmail" type="email" placeholder="Email">
-            <input id="editPassword" type="password" placeholder="Novo geslo">
-            <button class="btn primary" type="submit">Shrani spremembe</button>
-            <p id="editProfileMessage"></p>
-          </form>
+
+        <form id="editProfileForm" class="profile-form-hidden">
+          <input id="editIme" type="text" placeholder="Ime">
+          <input id="editPriimek" type="text" placeholder="Priimek">
+          <input id="editUsername" type="text" placeholder="Uporabniško ime">
+          <input id="editEmail" type="email" placeholder="Email">
+          <input id="editPassword" type="password" placeholder="Novo geslo">
+
+          <button class="btn primary" type="submit">
+            Shrani spremembe
+          </button>
+
+          <p id="editProfileMessage"></p>
+        </form>
       </aside>
-      <section class="card">
-        <h1>Moje Aktivnosti</h1>
+
+      <section class="card profile-main-card">
+        <h1>Moje aktivnosti</h1>
         <p id="profilMessage" class="success hidden"></p>
-        <div id="mojeAktivnosti" class="activity-list"></div>
+
+        <div class="profile-scroll-area">
+          <div id="mojeAktivnosti" class="activity-list"></div>
+        </div>
       </section>
-      
 
+    </section>
+    <section class="card accordion-card">
 
-    <section class="card">
-      <h2>Všečkani organizatorji</h2>
-      <div id="vseckaniOrganizatorji"></div>
+      <div class="accordion-header"
+           onclick="toggleAccordion('organizatorjiContent')">
+        <h2>Všečkani organizatorji</h2>
+        <span>▼</span>
+      </div>
+
+      <div id="organizatorjiContent"
+           class="accordion-content">
+        <div id="vseckaniOrganizatorji"></div>
+      </div>
+
     </section>
 
-    <section class="card">
-      <h2>Moji komentarji</h2>
-      <div id="mojiKomentarji"></div>
+    <section class="card accordion-card">
+
+      <div class="accordion-header"
+           onclick="toggleAccordion('komentarjiContent')">
+        <h2>Moji komentarji</h2>
+        <span>▼</span>
+      </div>
+
+      <div id="komentarjiContent"
+           class="accordion-content">
+        <div id="mojiKomentarji"></div>
+      </div>
+
     </section>
 
-    <section class="card">
-      <h2>Moje prijavljene aktivnosti</h2>
-      <div id="mojePrijavljeneAktivnosti"></div>
+    <section class="card accordion-card">
+
+      <div class="accordion-header"
+           onclick="toggleAccordion('prijavljeneContent')">
+        <h2>Moje prijavljene aktivnosti</h2>
+        <span>▼</span>
+      </div>
+
+      <div id="prijavljeneContent"
+           class="accordion-content">
+        <div id="mojePrijavljeneAktivnosti"></div>
+      </div>
+
+    </section>
+
     </section>
 
   </main>

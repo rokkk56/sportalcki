@@ -1990,3 +1990,19 @@ function pretvoriSlikoVBase64(file) {
 }
 
 naloziPodrobnostiAktivnosti();
+
+function toggleAccordion(id) {
+
+  document
+      .querySelectorAll(".accordion-content")
+      .forEach(el => {
+
+        if (el.id !== id) {
+          el.classList.remove("active");
+        }
+      });
+
+  document
+      .getElementById(id)
+      .classList.toggle("active");
+}
