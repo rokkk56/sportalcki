@@ -1711,7 +1711,8 @@ async function naloziVseAktivnostiZaZemljevid() {
         time: izpisanaUra
       };
     });
-
+    console.log("Število aktivnosti za mapo:", aktivnostiZaMapo.length);
+    console.log(aktivnostiZaMapo);
     prikaziAktivnostiNaZemljevidu(aktivnostiZaMapo);
 
   } catch (err) {
@@ -1749,12 +1750,26 @@ function prikaziAktivnostiNaZemljevidu(aktivnosti) {
 
   markerji.forEach(marker => zemljevid.removeLayer(marker));
   markerji = [];
+  const uporabljeneLokacije = {};
 
-  aktivnosti.forEach(a => {
-    const lat = Number(a.lat);
-    const lng = Number(a.lng);
+  aktivnosti.forEach((a, index) => {
+    let lat = Number(a.lat);
+    let lng = Number(a.lng);
 
     if (!lat || !lng) return;
+
+    const kljucLokacije = `${lat},${lng}`;
+
+    if (!uporabljeneLokacije[kljucLokacije]) {
+      uporabljeneLokacije[kljucLokacije] = 0;
+    }
+
+    const zamik = uporabljeneLokacije[kljucLokacije] * 0.003;
+
+    uporabljeneLokacije[kljucLokacije]++;
+
+    lat = lat + zamik;
+    lng = lng + zamik;
 
     const emoji = ikonaZaSport(a.sport);
 
@@ -1770,17 +1785,17 @@ function prikaziAktivnostiNaZemljevidu(aktivnosti) {
     }).addTo(zemljevid);
 
     marker.bindPopup(`
-  <div class="map-popup">
-    <h3>${emoji} ${a.title}</h3>
-    <p>${a.sport}</p>
-    <p>${a.venue}, ${a.city}</p>
-    <p>${a.date} ob ${a.time}</p>
+    <div class="map-popup">
+      <h3>${emoji} ${a.title}</h3>
+      <p>${a.sport}</p>
+      <p>${a.venue}, ${a.city}</p>
+      <p>${a.date} ob ${a.time}</p>
 
-    <a class="btn primary small" href="aktivnosti.html#termin-${a.id}">
-      Poglej aktivnost
-    </a>
-  </div>
-`);
+      <a class="btn primary small" href="aktivnost.html?id=${a.id}">
+        Poglej aktivnost
+      </a>
+    </div>
+  `);
 
     markerji.push(marker);
   });
@@ -1990,6 +2005,7 @@ function pretvoriSlikoVBase64(file) {
 }
 
 naloziPodrobnostiAktivnosti();
+//harmonika profil
 
 function toggleAccordion(id) {
 
