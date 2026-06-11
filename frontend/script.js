@@ -6,6 +6,11 @@
   { sport:'Tek', city:'Velenje', date:'Danes', time:'19:00', spots:0, level:'Začetnik', gender:'Mešano', age:'18-30', emoji:'🏃', org:'Jan' }
 ]; 
 */
+const API_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://localhost:3000"
+    : "https://sportalcki-backend.onrender.com"; 
+
+
 function nastaviFilterIzURL() {
   const params = new URLSearchParams(window.location.search);
   const sportIzURL = params.get("sport");
@@ -26,11 +31,13 @@ async function naloziAktivnosti(redniTermini) {
   try {
     var odgovor = null;
 
+    /*`${API_URL}/ -> spremenljivka v katero se shrani zgornji onrender */ 
+
     if (redniTermini == true) {
-      odgovor = await fetch('http://localhost:3000/api/redniTermini');
+      odgovor = await fetch(`${API_URL}/api/redniTermini`);
     }
     else {
-      odgovor = await fetch('http://localhost:3000/api/aktivnosti');
+      odgovor = await fetch(`${API_URL}/api/aktivnosti`);
     }
 
 
@@ -105,7 +112,7 @@ async function pridobiPrijavljeneTermine() {
   }
 
   try {
-    const odgovor = await fetch(`${API_URL}/prijave/moje/aktivnosti`, {
+    const odgovor = await fetch(`${API_URL}/api/prijave/moje/aktivnosti`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -259,7 +266,7 @@ async function toggleJoin(button, terminId) {
   const jeOdjava = button.textContent.trim() === "Odjavi se";
 
   try {
-    const odgovor = await fetch(`${API_URL}/prijave/${terminId}`, {
+    const odgovor = await fetch(`${API_URL}/api/prijave/${terminId}`, {
       method: jeOdjava ? "DELETE" : "POST",
       headers: {
         "Authorization": `Bearer ${token}`
@@ -297,8 +304,6 @@ document.querySelectorAll('#search, #sport, #level, #gender, #age, #available').
   el.addEventListener('change', renderActivities);
 });
 
-const API_URL = "http://localhost:3000/api";
-
 const loginForm = document.getElementById("loginForm");
 
 if (loginForm) {
@@ -313,7 +318,7 @@ if (loginForm) {
     message.classList.add("hidden");
 
     try {
-      const odgovor = await fetch(`${API_URL}/auth/login`, {
+      const odgovor = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -371,7 +376,7 @@ async function toggleJoinNaPodrobnostih(button, terminId) {
   const jeOdjava = button.textContent.trim() === "Odjavi se";
 
   try {
-    const odgovor = await fetch(`${API_URL}/prijave/${terminId}`, {
+    const odgovor = await fetch(`${API_URL}/api/prijave/${terminId}`, {
       method: jeOdjava ? "DELETE" : "POST",
       headers: {
         "Authorization": `Bearer ${token}`
@@ -409,7 +414,7 @@ async function naloziAdminAktivnosti() {
   }
 
   try {
-    const odgovor = await fetch(`${API_URL}/aktivnosti`);
+    const odgovor = await fetch(`${API_URL}/api/aktivnosti`);
     const aktivnosti = await odgovor.json();
 
     adminList.innerHTML = "";
@@ -472,7 +477,7 @@ async function izbrisiAktivnost(id) {
     return;
   }
 
-  await fetch(`${API_URL}/aktivnosti/${id}`, {
+  await fetch(`${API_URL}/api/aktivnosti/${id}`, {
     method: "DELETE",
     headers: {
       "Authorization": `Bearer ${token}`
@@ -494,7 +499,7 @@ async function urediAktivnost(id, starNaziv, staraMesta, starOpis, staraZahtevno
     return;
   }
 
-  await fetch(`${API_URL}/aktivnosti/${id}`, {
+  await fetch(`${API_URL}/api/aktivnosti/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -520,7 +525,7 @@ async function naloziKomentarje() {
   const container = document.getElementById("komentarji");
   if (!container) return;
 
-  const odgovor = await fetch(`${API_URL}/komentarji`);
+  const odgovor = await fetch(`${API_URL}/api/komentarji`);
   const komentarji = await odgovor.json();
 
   container.innerHTML = `<div class="card" id="komentarjiCard"></div>`;
@@ -552,7 +557,7 @@ if (komentarForm) {
       return;
     }
 
-    const odgovor = await fetch(`${API_URL}/komentarji`, {
+    const odgovor = await fetch(`${API_URL}/api/komentarji`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -590,7 +595,7 @@ async function naloziMojeKomentarje() {
     return;
   }
 
-  const odgovor = await fetch(`${API_URL}/komentarji/moji`, {
+  const odgovor = await fetch(`${API_URL}/api/komentarji/moji`, {
     headers: {
       "Authorization": `Bearer ${token}`
     }
@@ -623,7 +628,7 @@ async function naloziVseckaneOrganizatorje() {
     return;
   }
 
-  const odgovor = await fetch(`${API_URL}/organizatorji/vseckani`, {
+  const odgovor = await fetch(`${API_URL}/api/organizatorji/vseckani`, {
     headers: {
       "Authorization": `Bearer ${token}`
     }
@@ -666,8 +671,8 @@ async function toggleHeart(button, organizatorId) {
   button.textContent = jeVseckan ? "♥" : "♡";
 
   await fetch(jeVseckan
-    ? `${API_URL}/organizatorji/vseckani` :
-    `${API_URL}/organizatorji/vseckani/${organizatorId}`,
+    ? `${API_URL}/api/organizatorji/vseckani` :
+    `${API_URL}/api/organizatorji/vseckani/${organizatorId}`,
     {
       method: jeVseckan ? "POST" : "DELETE",
       headers: {
@@ -690,7 +695,7 @@ async function pridobiVseckaneIds() {
   }
 
   try {
-  const odgovor = await fetch(`${API_URL}/organizatorji/vseckani`, {
+  const odgovor = await fetch(`${API_URL}/api/organizatorji/vseckani`, {
     headers: {
       "Authorization": `Bearer ${token}`
     }
@@ -730,7 +735,7 @@ if (dodajTerminForm) {
       return;
     }
 
-    const odgovor = await fetch(`${API_URL}/aktivnosti/dodaj`, {
+    const odgovor = await fetch(`${API_URL}/api/aktivnosti/dodaj`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -778,7 +783,7 @@ async function naloziMojePrijavljeneAktivnosti() {
   }
 
   try {
-    const odgovor = await fetch(`${API_URL}/prijave/moje/aktivnosti`, {
+    const odgovor = await fetch(`${API_URL}/api/prijave/moje/aktivnosti`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -848,7 +853,7 @@ async function odjaviSeIzProfila(terminId) {
     return;
   }
 
-  const odgovor = await fetch(`${API_URL}/prijave/${terminId}`, {
+  const odgovor = await fetch(`${API_URL}/api/prijave/${terminId}`, {
     method: "DELETE",
     headers: {
       "Authorization": `Bearer ${token}`
@@ -961,7 +966,7 @@ async function naloziAdminOglase() {
   const oglasiBox = document.getElementById("adminOglasi");
   const token = localStorage.getItem("token");
 
-  const odgovor = await fetch("http://localhost:3000/api/admin/oglasi", {
+  const odgovor = await fetch(`${API_URL}/api/admin/oglasi`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -1016,7 +1021,7 @@ async function shraniAdminOglas(id) {
   const steviloMest = document.getElementById(`mesta-${id}`).value;
   const zahtevnost = document.getElementById(`zahtevnost-${id}`).value;
 
-  const odgovor = await fetch(`http://localhost:3000/api/admin/oglasi/${id}`, {
+  const odgovor = await fetch(`${API_URL}/api/admin/oglasi/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -1067,7 +1072,7 @@ async function izbrisiAdminOglas(id) {
 async function potrdiBrisanjeOglasa(id) {
   const token = localStorage.getItem("token");
 
-  const odgovor = await fetch(`http://localhost:3000/api/admin/oglasi/${id}`, {
+  const odgovor = await fetch(`${API_URL}/api/admin/oglasi/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`
@@ -1089,7 +1094,7 @@ async function naloziAdminKomentarje() {
   const komentarjiBox = document.getElementById("adminKomentarji");
   const token = localStorage.getItem("token");
 
-  const odgovor = await fetch("http://localhost:3000/api/admin/komentarji", {
+  const odgovor = await fetch(`${API_URL}/api/admin/komentarji`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -1150,7 +1155,7 @@ function izbrisiAdminKomentar(id) {
 async function potrdiBrisanjeKomentarja(id) {
   const token = localStorage.getItem("token");
 
-  const odgovor = await fetch(`http://localhost:3000/api/admin/komentarji/${id}`, {
+  const odgovor = await fetch(`${API_URL}/api/admin/komentarji/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`
@@ -1184,7 +1189,7 @@ async function naloziMojeAktivnosti() {
     return;
   }
 
-  const odgovor = await fetch("http://localhost:3000/api/organizatorji/moje-aktivnosti", {
+  const odgovor = await fetch(`${API_URL}/api/organizatorji/moje-aktivnosti`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -1260,7 +1265,7 @@ async function shraniMojoAktivnost(id) {
   const steviloMest = document.getElementById(`moja-mesta-${id}`).value;
   const zahtevnost = document.getElementById(`moja-zahtevnost-${id}`).value;
 
-  const odgovor = await fetch(`http://localhost:3000/api/organizatorji/moje-aktivnosti/${id}`, {
+  const odgovor = await fetch(`${API_URL}/api/organizatorji/moje-aktivnosti/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -1309,7 +1314,7 @@ function izbrisiMojoAktivnost(id) {
 async function potrdiBrisanjeMojeAktivnosti(id) {
   const token = localStorage.getItem("token");
 
-  const odgovor = await fetch(`http://localhost:3000/api/organizatorji/moje-aktivnosti/${id}`, {
+  const odgovor = await fetch(`${API_URL}/api/organizatorji/moje-aktivnosti/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`
@@ -1331,7 +1336,7 @@ async function naloziPrijaveNaAktivnost(id) {
   const token = localStorage.getItem("token");
   const prijaveBox = document.getElementById(`prijave-${id}`);
 
-  const odgovor = await fetch(`http://localhost:3000/api/organizatorji/moje-aktivnosti/${id}/prijave`, {
+  const odgovor = await fetch(`${API_URL}/api/organizatorji/moje-aktivnosti/${id}/prijave`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -1397,7 +1402,7 @@ if (registerForm) {
     }
 
     try {
-      const odgovor = await fetch(`${API_URL}/auth/register`, {
+      const odgovor = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -1447,7 +1452,7 @@ async function naloziProfil() {
     return;
   }
 
-  const odgovor = await fetch(`${API_URL}/auth/me`, {
+  const odgovor = await fetch(`${API_URL}/api/auth/me`, {
     headers: {
       "Authorization": `Bearer ${token}`
     }
@@ -1488,7 +1493,7 @@ if (profileImageInput) {
     reader.onload = async function (e) {
       const token = localStorage.getItem("token");
 
-      await fetch(`${API_URL}/auth/profilna-slika`, {
+      await fetch(`${API_URL}/api/auth/profilna-slika`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -1539,7 +1544,7 @@ if (editProfileForm) {
     const password = document.getElementById("editPassword").value;
     const message = document.getElementById("editProfileMessage");
 
-    const odgovor = await fetch(`${API_URL}/auth/me`, {
+    const odgovor = await fetch(`${API_URL}/api/auth/me`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -1606,7 +1611,7 @@ async function oddajRedniKomentar(e, activityId) {
   try {
     sporocilo.textContent = "Pošiljam...";
 
-    const odgovor = await fetch(`${API_URL}/komentarji`, {
+    const odgovor = await fetch(`${API_URL}/api/komentarji`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -1645,7 +1650,7 @@ function prikaziUrediProfil() {
 
 //prijava z google profilom
 async function  handleGoogleLogin(response) {
-  const odgovor = await fetch (`${API_URL}/auth/google`, {
+  const odgovor = await fetch (`${API_URL}/api/auth/google`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -1678,8 +1683,8 @@ async function naloziVseAktivnostiZaZemljevid() {
   if (!document.getElementById("map")) return;
 
   try {
-    const odgovorAktivnosti = await fetch(`${API_URL}/aktivnosti`);
-    const odgovorRedni = await fetch(`${API_URL}/redniTermini`);
+    const odgovorAktivnosti = await fetch(`${API_URL}/api/aktivnosti`);
+    const odgovorRedni = await fetch(`${API_URL}/api/redniTermini`);
 
     const aktivnosti = await odgovorAktivnosti.json();
     const redniTermini = await odgovorRedni.json();
@@ -1826,7 +1831,7 @@ async function naloziPodrobnostiAktivnosti() {
   }
 
   try {
-    const odgovor = await fetch(`${API_URL}/aktivnosti/${id}`);
+    const odgovor = await fetch(`${API_URL}/api/aktivnosti/${id}`);
     const a = await odgovor.json();
 
     if (!odgovor.ok) {
@@ -1908,7 +1913,7 @@ async function naloziKomentarjeAktivnosti(terminId) {
   if (!container) return;
 
   try {
-    const odgovor = await fetch(`${API_URL}/komentarji/termin/${terminId}`);
+    const odgovor = await fetch(`${API_URL}/api/komentarji/termin/${terminId}`);
     const komentarji = await odgovor.json();
 
     if (!odgovor.ok) {
@@ -1958,7 +1963,7 @@ function pripraviObrazecZaKomentar(terminId) {
       slikaTekst = await pretvoriSlikoVBase64(slikaInput.files[0]);
     }
 
-    const odgovor = await fetch(`${API_URL}/komentarji`, {
+    const odgovor = await fetch(`${API_URL}/api/komentarji`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

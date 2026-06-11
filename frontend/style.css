@@ -152,7 +152,7 @@ nav a:hover {
   background: rgba(253, 251, 247, 0.85); 
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px); 
-  border: 10px solid rgba(253, 251, 247, 0.85); 
+  border: 1px solid var(--robovi);
   border-radius: var(--zaobljenost);
   gap: 70px;
   padding: 20px;
@@ -165,7 +165,7 @@ nav a:hover {
   background: rgba(253, 251, 247, 0.85); 
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px); 
-  border: 10px solid rgba(253, 251, 247, 0.85); 
+  border: 1px solid var(--robovi);
   border-radius: var(--zaobljenost);
   padding: 30px;
   margin-top: 60px;
