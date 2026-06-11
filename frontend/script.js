@@ -745,7 +745,7 @@ if (dodajTerminForm) {
         starostnaskupina: document.getElementById("starost").value,
         spol: document.getElementById("spol").value,
         prizorisceid: document.getElementById("prizorisce").value,
-        sportid: 1,
+        sportid: document.getElementById("sport").value,
         rednitermin: document.getElementById("redno").checked
       })
     });
